@@ -10,40 +10,46 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
+
 public class MainController extends HBox {
+
+    
 
     public MainController() {
 
-        this.setSpacing(20);
-        this.setPadding(new Insets(20));
+        
+
+        this.setSpacing(10);
+        this.setPadding(new Insets(0));
         this.setStyle("-fx-background-color: transparent;");
 
-        VBox colLeft = new VBox(20);
+        VBox colLeft = new VBox(10);
         colLeft.setPrefWidth(300);
 
         FriendsPanel friends = new FriendsPanel();
         NowPlayingPanel nowPlaying = new NowPlayingPanel();
 
-        VBox.setVgrow(friends, Priority.ALWAYS); 
-        
+        nowPlaying.setMinHeight(275);
+
+        VBox.setVgrow(friends, Priority.ALWAYS);
+
         colLeft.getChildren().addAll(friends, nowPlaying);
 
+        VBox colRight = new VBox(10);
+        HBox.setHgrow(colRight, Priority.ALWAYS);
 
-
-
-        VBox colRight = new VBox(20);
-        HBox.setHgrow(colRight, Priority.ALWAYS); 
-        
         MainContentPanel mainContent = new MainContentPanel();
         PlayerControlsPanel controls = new PlayerControlsPanel();
-        
-        
+
         VBox.setVgrow(mainContent, Priority.ALWAYS);
-        controls.setPrefHeight(80); 
-        
+        controls.setPrefHeight(50);
+
         colRight.getChildren().addAll(mainContent, controls);
 
-        
         this.getChildren().addAll(colLeft, colRight);
+
+        
     }
+
+    
 }
