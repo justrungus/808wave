@@ -6,7 +6,7 @@
 
 /* Definición del panel con efecto de cristal */
 .glass-panel {
-    /* Color blanco muy transparente (0.15 de opacidad) */
+    
     -fx-background-color: rgba(30, 30, 30, 0.911);
     
     /* Bordes redondeados como en tu imagen */
@@ -33,9 +33,7 @@
 /* Contenedor de las píldoras (Izquierda y Derecha) */
 .pill-box {
 
-    -fx-background-color: transparent, #f2eff4; 
-    -fx-background-insets: 0, 0; 
-    -fx-background-radius: 0, 50;
+    
 
     -fx-background-color: #f2eff4; /* Ese tono gris claro/lila de tu imagen */
     -fx-background-radius: 50;
