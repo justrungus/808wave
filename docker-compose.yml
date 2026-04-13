@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:latest
+    container_name: wave808-db
+    restart: always
+    environment:
+      POSTGRES_USER: itecan
+      POSTGRES_PASSWORD: your_secure_password
+      POSTGRES_DB: wave808_db
+    ports:
+      - "5432:5433"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data

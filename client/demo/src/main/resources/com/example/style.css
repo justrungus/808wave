@@ -66,3 +66,12 @@
     -fx-background-color: #f2eff4;
     -fx-border-color: transparent; /* Quita el borde por defecto */
 }
+
+.player-bar {
+    -fx-background-color: #f2eff4; /* Gris lila semitransparente */
+    -fx-background-radius: 25;
+    -fx-padding: 15 30 15 30;
+    -fx-alignment: CENTER;
+    -fx-min-height: 100;
+}
+
