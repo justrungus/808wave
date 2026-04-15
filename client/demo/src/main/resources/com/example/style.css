@@ -23,10 +23,16 @@
 
 /* Opcional: Hacer que los textos sean blancos para que se lean mejor */
 .label {
-    -fx-text-fill: #ecf0f1;
+    -fx-text-fill: #4a4a4a;
     -fx-font-family: "Segoe UI", sans-serif;
 }
 
+.slide-label{
+    -fx-text-fill: #B39DDB;
+    -fx-font-family: "Segoe UI", sans-serif;
+    -fx-font-size: 14px;
+    -fx-font-weight: "bold";
+}
 
 
 
@@ -35,7 +41,7 @@
 
     
 
-    -fx-background-color: #f2eff4; /* Ese tono gris claro/lila de tu imagen */
+    -fx-background-color: #B39DDB; /* Ese tono gris claro/lila de tu imagen */
     -fx-background-radius: 50;
     -fx-padding: 0 15 0 15; /* Espaciado interno: Arriba, Derecha, Abajo, Izquierda */
     -fx-alignment: center;
@@ -63,15 +69,28 @@
     
     -fx-min-height: 40;
     -fx-max-height: 40;
-    -fx-background-color: #f2eff4;
+    -fx-background-color: #B39DDB;
     -fx-border-color: transparent; /* Quita el borde por defecto */
 }
 
 .player-bar {
-    -fx-background-color: #f2eff4; /* Gris lila semitransparente */
+    -fx-background-color: #B39DDB; /* Gris lila semitransparente */
     -fx-background-radius: 25;
     -fx-padding: 15 30 15 30;
     -fx-alignment: CENTER;
     -fx-min-height: 100;
 }
+
+.player-slider .track {
+    -fx-pref-height: 4px;
+    -fx-background-radius: 5;
+    -fx-border-color: transparent;
+}
+
+/* Tu bolita morada */
+.player-slider .thumb {
+    -fx-background-color: #B39DDB;
+    -fx-padding: 6;
+}
+
 
