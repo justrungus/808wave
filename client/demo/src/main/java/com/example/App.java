@@ -24,7 +24,8 @@ public class App extends Application {
 
         showWelcome();
         stage.initStyle(StageStyle.TRANSPARENT);
-        stage.show();      
+        stage.show();
+        centerWindow(stage);
     }
 
     

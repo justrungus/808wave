@@ -19,17 +19,21 @@ public class RegisterView extends VBox{
         lblTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #B39DDB;");
 
         String inputStyle = "-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #B39DDB; -fx-prompt-text-fill: gray;";
+        
 
         TextField txtEmail = new TextField();
         txtEmail.setPromptText("Email Address");
         txtEmail.setMaxWidth(250);
         txtEmail.setStyle(inputStyle);
+        txtEmail.getStyleClass().add("now-playing-title");
 
 
         TextField txtUsername = new TextField();
         txtUsername.setPromptText("Username");
         txtUsername.setMaxWidth(250);
         txtUsername.setStyle(inputStyle);
+        txtUsername.getStyleClass().add("now-playing-title");
+
 
         PasswordField txtPassword = new PasswordField();
         txtPassword.setPromptText("Password");

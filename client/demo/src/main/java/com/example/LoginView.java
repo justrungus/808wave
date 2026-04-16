@@ -23,11 +23,12 @@ public class LoginView extends VBox{
         txtUsername.setPromptText("Username or Email");
         txtUsername.setMaxWidth(250);
         txtUsername.setStyle("-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #B39DDB; -fx-prompt-text-fill: gray;");
-
+        txtUsername.getStyleClass().add("now-playing-title");
         PasswordField txtPassword = new PasswordField();
         txtPassword.setPromptText("Password");
         txtPassword.setMaxWidth(250);
         txtPassword.setStyle("-fx-background-color: rgba(255,255,255,0.1); -fx-text-fill: #B39DDB; -fx-prompt-text-fill: gray;");
+        
 
         HBox buttonBox = new HBox(15);
         buttonBox.setAlignment(Pos.CENTER);
