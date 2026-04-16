@@ -104,3 +104,42 @@
     -fx-font-size: 13px;
     -fx-text-fill: #B39DDB; 
 }
+
+
+/* Cabecera "Friends" tipo píldora */
+.friends-header {
+    -fx-background-color: #B39DDB;
+    -fx-text-fill: #4a4a4a;
+    -fx-background-radius: 50; 
+    -fx-padding: 0 20 0 20;    
+    -fx-font-weight: bold;
+    -fx-alignment: center;     
+    
+    
+    -fx-min-height: 40;
+    -fx-max-height: 40;
+    -fx-min-width: 280;
+}
+
+/* Divisores Online/Offline */
+.status-divider {
+    -fx-text-fill: #888;
+    -fx-font-size: 11px;
+    -fx-alignment: center;
+}
+
+/* Efecto al pasar el ratón sobre un amigo */
+.friend-item {
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+    -fx-transition: 0.3s;
+}
+
+.friend-item:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.05);
+}
+
+#friends-sidebar {
+    
+    -fx-padding: 9 15 0 15; 
+}

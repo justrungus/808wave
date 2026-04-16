@@ -19,7 +19,7 @@ public class NowPlayingPanel extends VBox{
         //imagen
         ImageView albumArt = new ImageView();
 
-        String imagePath = getClass().getResource("/com/example/imageDefault2.png").toExternalForm();
+        String imagePath = getClass().getResource("/com/example/imageDefault.png").toExternalForm();
         albumArt.setImage(new Image(imagePath));
         
         albumArt.setFitWidth(180);
