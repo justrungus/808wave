@@ -1,6 +1,6 @@
 package com.example;
 
-import atlantafx.base.theme.PrimerLight;
+import atlantafx.base.theme.PrimerDark;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
@@ -14,32 +14,20 @@ import javafx.stage.StageStyle;
  */
 public class App extends Application {
 
+    private Stage primaryStage;
+    private Scene scene;
+
     @Override
     public void start(Stage stage) {
+        this.primaryStage = stage;
+        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
 
-        Application.setUserAgentStylesheet(new PrimerLight().getUserAgentStylesheet());
-
-        MainController raiz = new MainController();
-
-        Scene scene = new Scene(raiz, 1366, 769);
-
-        String css = getClass().getResource("/com/example/style.css").toExternalForm();
-        scene.getStylesheets().add(css);
-        
-
-        scene.setFill(Color.TRANSPARENT);
-        stage.initStyle(StageStyle.TRANSPARENT); 
-        
-        
-        stage.setScene(scene);
-        stage.show();
-        
-        centerWindow(stage);        
+        showWelcome();
+        stage.initStyle(StageStyle.TRANSPARENT);
+        stage.show();      
     }
 
-    public static void main(String[] args) {
-        launch();
-    }
+    
 
     private void centerWindow(Stage stage){
         Rectangle2D limitesPantalla = Screen.getPrimary().getVisualBounds();
@@ -51,4 +39,44 @@ public class App extends Application {
         stage.setY(centroY);
     }
 
+    public void showWelcome(){
+        WelcomeView welcome = new WelcomeView(this::showLogin, this::showRegister);
+        setRoot(welcome, 600, 400);
+    }
+
+    public void showLogin(){
+        LoginView login = new LoginView(this::showWelcome, this::showMainApp);
+        setRoot(login, 600, 400);
+    }
+
+    public void showRegister(){
+        RegisterView register = new RegisterView(this::showWelcome, this::showMainApp);
+        setRoot(register, 600, 450);
+    }
+
+    public void showMainApp(){
+        MainController main = new MainController(); 
+        setRoot(main, 1366, 769);
+        
+    }
+
+    private void setRoot(javafx.scene.Parent root, double width, double height){
+        if (scene == null){
+            scene = new Scene(root, width, height);
+            scene.setFill(Color.TRANSPARENT);
+
+            String css = getClass().getResource("/com/example/style.css").toExternalForm();
+            scene.getStylesheets().add(css);
+        } else {
+            scene.setRoot(root);
+            primaryStage.setWidth(width);
+            primaryStage.setHeight(height);
+        }
+        primaryStage.setScene(scene);
+        primaryStage.centerOnScreen();
+    }
+
+    public static void main(String[] args) {
+        launch();
+    }
 }

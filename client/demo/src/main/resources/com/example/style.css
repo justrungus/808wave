@@ -1,7 +1,7 @@
-
+/* 
 .root{
     -fx-background-color: transparent !important;
-}
+} */
 
 
 /* Definición del panel con efecto de cristal */
@@ -71,6 +71,8 @@
     -fx-max-height: 40;
     -fx-background-color: #B39DDB;
     -fx-border-color: transparent; /* Quita el borde por defecto */
+    -fx-text-fill: #4a4a4a;
+    -fx-font-weight: bold;
 }
 
 .player-bar {
