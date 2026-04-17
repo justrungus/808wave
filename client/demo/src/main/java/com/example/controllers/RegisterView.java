@@ -1,4 +1,6 @@
-package com.example;
+package com.example.controllers;
+
+import com.example.core.Router;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -9,7 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class RegisterView extends VBox{
-    public RegisterView(Runnable onBack, Runnable onRegisterAttempt) {
+    public RegisterView() {
         this.getStyleClass().add("glass-panel");
         this.setAlignment(Pos.CENTER);
         this.setSpacing(15);
@@ -51,12 +53,14 @@ public class RegisterView extends VBox{
 
         Button btnBack = new Button("BACK");
         btnBack.getStyleClass().add("pill-button");
-        btnBack.setOnAction(e -> onBack.run());
+        
 
         Button btnRegister = new Button("SIGN UP");
         btnRegister.getStyleClass().add("pill-button");
         btnRegister.setStyle("-fx-background-color: #B39DDB; -fx-text-fill: #1e1e1e;");
-        btnRegister.setOnAction(e -> onRegisterAttempt.run());
+        
+        btnBack.setOnAction(e -> Router.navigateTo("WELCOME"));
+        btnRegister.setOnAction(e -> Router.navigateTo("MAIN"));
 
         buttonBox.getChildren().addAll(btnBack, btnRegister);
         this.getChildren().addAll(lblTitle, txtEmail, txtUsername, txtPassword, txtConfirmPassword, buttonBox);

@@ -1,4 +1,6 @@
-package com.example;
+package com.example.controllers;
+
+import com.example.core.Router;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -10,7 +12,7 @@ import javafx.scene.shape.SVGPath;
 
 public class WelcomeView extends VBox{
 
-    public WelcomeView(Runnable onLogin, Runnable onRegister){
+    public WelcomeView(){
         this.getStyleClass().add("glass-panel");
         this.setAlignment(Pos.CENTER);
         this.setSpacing(30);
@@ -46,8 +48,8 @@ public class WelcomeView extends VBox{
         btnLogin.setOnAction(e -> showLogin());
 
 
-        btnLogin.setOnAction(e -> onLogin.run());
-        btnRegister.setOnAction(e -> onRegister.run());
+        btnLogin.setOnAction(e -> Router.navigateTo("LOGIN"));
+        btnRegister.setOnAction(e -> Router.navigateTo("REGISTER"));
         
     }
 

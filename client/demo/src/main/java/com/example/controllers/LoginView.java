@@ -1,4 +1,6 @@
-package com.example;
+package com.example.controllers;
+
+import com.example.core.Router;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -10,7 +12,7 @@ import javafx.scene.layout.VBox;
 
 public class LoginView extends VBox{
 
-    public LoginView(Runnable onBack, Runnable onLoginAttempt){
+    public LoginView(){
         this.getStyleClass().add("glass-panel");
         this.setAlignment(Pos.CENTER);
         this.setSpacing(20);
@@ -47,8 +49,8 @@ public class LoginView extends VBox{
 
         this.getChildren().addAll(lblTitle, txtUsername, txtPassword, buttonBox);
 
-        btnBack.setOnAction(e -> onBack.run());
-        btnLogin.setOnAction(e -> onLoginAttempt.run());
+        btnBack.setOnAction(e -> Router.navigateTo("WELCOME"));
+        btnLogin.setOnAction(e -> Router.navigateTo("MAIN"));
     }
 
 }

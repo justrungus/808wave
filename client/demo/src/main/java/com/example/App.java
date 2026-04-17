@@ -1,5 +1,11 @@
 package com.example;
 
+import com.example.controllers.LoginView;
+import com.example.controllers.MainController;
+import com.example.controllers.RegisterView;
+import com.example.controllers.WelcomeView;
+import com.example.core.Router;
+
 import atlantafx.base.theme.PrimerDark;
 import javafx.application.Application;
 import javafx.geometry.Rectangle2D;
@@ -14,21 +20,51 @@ import javafx.stage.StageStyle;
  */
 public class App extends Application {
 
-    private Stage primaryStage;
-    private Scene scene;
+    
 
     @Override
-    public void start(Stage stage) {
-        this.primaryStage = stage;
-        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
+    public void start(Stage primaryStage) {
 
-        showWelcome();
-        stage.initStyle(StageStyle.TRANSPARENT);
-        stage.show();
-        centerWindow(stage);
+        
+        Router.initialize(primaryStage);
+
+        
+        Application.setUserAgentStylesheet(new PrimerDark().getUserAgentStylesheet());
+        primaryStage.initStyle(StageStyle.TRANSPARENT);
+
+        
+        WelcomeView welcome = new WelcomeView();
+        LoginView login = new LoginView();
+        RegisterView register = new RegisterView();
+        MainController main = new MainController();
+
+        
+        Router.addRoute("WELCOME", createScene(welcome, 600, 400));
+        Router.addRoute("LOGIN", createScene(login, 600, 400));
+        Router.addRoute("REGISTER", createScene(register, 600, 450));
+        Router.addRoute("MAIN", createScene(main, 1366, 769));
+
+        
+        Router.navigateTo("WELCOME");
+
+        centerWindow(primaryStage);
     }
 
     
+    private Scene createScene(javafx.scene.Parent root, double width, double height) {
+        Scene scene = new Scene(root, width, height);
+        scene.setFill(Color.TRANSPARENT);
+
+        // Verifica que esta ruta al CSS sea correcta según tu estructura
+        try {
+            String css = getClass().getResource("/com/example/style.css").toExternalForm();
+            scene.getStylesheets().add(css);
+        } catch (NullPointerException e) {
+            System.err.println("Aviso: No se encontró style.css, continuando sin él.");
+        }
+
+        return scene;
+    }
 
     private void centerWindow(Stage stage){
         Rectangle2D limitesPantalla = Screen.getPrimary().getVisualBounds();
@@ -38,43 +74,6 @@ public class App extends Application {
         
         stage.setX(centroX);
         stage.setY(centroY);
-    }
-
-    public void showWelcome(){
-        WelcomeView welcome = new WelcomeView(this::showLogin, this::showRegister);
-        setRoot(welcome, 600, 400);
-    }
-
-    public void showLogin(){
-        LoginView login = new LoginView(this::showWelcome, this::showMainApp);
-        setRoot(login, 600, 400);
-    }
-
-    public void showRegister(){
-        RegisterView register = new RegisterView(this::showWelcome, this::showMainApp);
-        setRoot(register, 600, 450);
-    }
-
-    public void showMainApp(){
-        MainController main = new MainController(); 
-        setRoot(main, 1366, 769);
-        
-    }
-
-    private void setRoot(javafx.scene.Parent root, double width, double height){
-        if (scene == null){
-            scene = new Scene(root, width, height);
-            scene.setFill(Color.TRANSPARENT);
-
-            String css = getClass().getResource("/com/example/style.css").toExternalForm();
-            scene.getStylesheets().add(css);
-        } else {
-            scene.setRoot(root);
-            primaryStage.setWidth(width);
-            primaryStage.setHeight(height);
-        }
-        primaryStage.setScene(scene);
-        primaryStage.centerOnScreen();
     }
 
     public static void main(String[] args) {

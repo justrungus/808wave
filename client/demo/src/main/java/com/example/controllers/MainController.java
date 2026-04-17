@@ -1,4 +1,4 @@
-package com.example;
+package com.example.controllers;
 
 import com.example.components.FriendsPanel;
 import com.example.components.MainContentPanel;
