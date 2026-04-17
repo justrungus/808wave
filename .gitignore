@@ -38,3 +38,6 @@ build/
 client/target/
 *.class
 .DS_Store
+
+postgres-data/
+pg-data/

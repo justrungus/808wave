@@ -30,12 +30,14 @@ public class WelcomeView extends VBox{
         buttons.setAlignment(Pos.CENTER);
 
         Button btnLogin = new Button("LOGIN");
-        btnLogin.getStyleClass().add("pill-button");
         btnLogin.setPrefWidth(120);
+        btnLogin.getStyleClass().add("pill-button");
+        btnLogin.setStyle("-fx-background-color: #B39DDB; -fx-text-fill: #1e1e1e;"); 
 
         Button btnRegister = new Button("REGISTER");
         btnRegister.getStyleClass().add("pill-button");
         btnRegister.setPrefWidth(120);
+        btnRegister.setStyle("-fx-background-color: #B39DDB; -fx-text-fill: #1e1e1e;"); 
 
         buttons.getChildren().addAll(btnLogin, btnRegister);
 
