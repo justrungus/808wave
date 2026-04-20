@@ -1,5 +1,7 @@
 package com.example.components;
 
+import com.example.core.Session;
+
 import atlantafx.base.theme.Styles;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -21,6 +23,8 @@ public class MainContentPanel extends VBox{
     private double xOffset = 0;
     private double yOffset = 0;
 
+    private Label profileName;
+    
     public MainContentPanel(){
         //estilo css custom del panel
         this.getStyleClass().add("glass-panel");
@@ -117,7 +121,8 @@ public class MainContentPanel extends VBox{
         // avatar.setFill(new ImagePattern(new Image("file:ruta/a/tu/imagen.jpg")));
         // O si está en resources: new Image(getClass().getResource("/tu_imagen.png").toExternalForm())
 
-        Label profileName = new Label("Username");
+        profileName = new Label("Guest");
+        
 
         //botones
         Button btnNotifications = new Button();
@@ -151,5 +156,12 @@ public class MainContentPanel extends VBox{
         rightPill.getChildren().addAll(avatar, profileName, btnNotifications, btnMaximize, btnClose);
 
         return rightPill;
+    }
+
+    public void refreshUserData(){
+        String currentUserName = Session.getInstance().getUsername();
+        if (currentUserName != null) {
+        this.profileName.setText(currentUserName);
+    }
     }
 }

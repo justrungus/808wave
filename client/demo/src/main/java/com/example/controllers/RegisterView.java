@@ -1,6 +1,8 @@
 package com.example.controllers;
 
 import com.example.core.Router;
+import com.example.models.User;
+import com.example.services.AuthService;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -11,6 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class RegisterView extends VBox{
+    private final AuthService authService = new AuthService();
     public RegisterView() {
         this.getStyleClass().add("glass-panel");
         this.setAlignment(Pos.CENTER);
@@ -60,7 +63,19 @@ public class RegisterView extends VBox{
         btnRegister.setStyle("-fx-background-color: #B39DDB; -fx-text-fill: #1e1e1e;");
         
         btnBack.setOnAction(e -> Router.navigateTo("WELCOME"));
-        btnRegister.setOnAction(e -> Router.navigateTo("MAIN"));
+        btnRegister.setOnAction(e -> {
+            String user = txtUsername.getText();
+            String mail = txtEmail.getText();
+            String pass = txtPassword.getText();
+            try{
+                User newUser = authService.register(user, mail, pass);
+                com.example.core.Session.getInstance().setUsername(newUser.getUsername());
+                com.example.core.Router.navigateTo("MAIN");
+            }catch (Exception ex) {
+        
+                System.err.println("Error en el registro: " + ex.getMessage());
+            }
+        });
 
         buttonBox.getChildren().addAll(btnBack, btnRegister);
         this.getChildren().addAll(lblTitle, txtEmail, txtUsername, txtPassword, txtConfirmPassword, buttonBox);

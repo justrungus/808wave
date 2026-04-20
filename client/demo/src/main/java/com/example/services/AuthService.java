@@ -6,7 +6,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 
-import com.google.gson.JsonObject;
+import com.example.models.User;
+import com.google.gson.Gson;
 
 // import java.net.http.HttpClient;
 // import java.net.http.HttpRequest;
@@ -15,11 +16,11 @@ import com.google.gson.JsonObject;
 
 public class AuthService {
     private final HttpClient client = HttpClient.newHttpClient();
-
+    private final Gson gson = new Gson();
     private final String BASE_URL = "http://localhost:8080/api/auth";
 
 
-    public String register(String username, String email, String password) throws Exception {
+    public User register(String username, String email, String password) throws Exception {
         // 1. Preparamos los datos en formato JSON
         Map<String, String> data = Map.of(
             "username", username,
@@ -40,8 +41,7 @@ public class AuthService {
 
         // 4. Si el servidor dice OK (200), leemos el nombre de usuario y lo devolvemos
         if (response.statusCode() == 200) {
-            JsonObject jsonObject = gson.fromJson(response.body(), JsonObject.class);
-            return jsonObject.get("username").getAsString();
+            return gson.fromJson(response.body(), User.class);
         } else {
             // Si el servidor da error (ej. "El email ya existe"), explotamos con ese mensaje
             throw new Exception(response.body());

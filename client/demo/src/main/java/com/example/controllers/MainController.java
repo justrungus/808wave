@@ -13,7 +13,7 @@ import javafx.scene.layout.VBox;
 
 public class MainController extends HBox {
 
-
+    private MainContentPanel mainContent;
 
     public MainController() {
 
@@ -38,7 +38,7 @@ public class MainController extends HBox {
         VBox colRight = new VBox(10);
         HBox.setHgrow(colRight, Priority.ALWAYS);
 
-        MainContentPanel mainContent = new MainContentPanel();
+        this.mainContent = new MainContentPanel();
         PlayerControlsPanel controls = new PlayerControlsPanel();
 
         VBox.setVgrow(mainContent, Priority.ALWAYS);
@@ -49,6 +49,12 @@ public class MainController extends HBox {
         this.getChildren().addAll(colLeft, colRight);
 
         
+    }
+
+    public void refreshUserData() {
+        if (mainContent != null) {
+            mainContent.refreshUserData();
+        }
     }
 
     
