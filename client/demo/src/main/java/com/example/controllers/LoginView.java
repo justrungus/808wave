@@ -1,6 +1,9 @@
 package com.example.controllers;
 
 import com.example.core.Router;
+import com.example.core.Session;
+import com.example.models.User;
+import com.example.services.AuthService;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -11,6 +14,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class LoginView extends VBox{
+
+    private final AuthService authService = new AuthService();
 
     public LoginView(){
         this.getStyleClass().add("glass-panel");
@@ -50,7 +55,29 @@ public class LoginView extends VBox{
         this.getChildren().addAll(lblTitle, txtUsername, txtPassword, buttonBox);
 
         btnBack.setOnAction(e -> Router.navigateTo("WELCOME"));
-        btnLogin.setOnAction(e -> Router.navigateTo("MAIN"));
+        btnLogin.setOnAction(e -> {
+            String user = txtUsername.getText();
+            String pass = txtPassword.getText();
+
+            if (user.isEmpty() || pass.isEmpty()) {
+                System.out.println("Complete the fields");
+                return;
+            }
+
+            try {
+                
+                User loggedUser = authService.login(user, pass);
+                
+                Session.getInstance().setUsername(loggedUser.getUsername());
+                
+
+                Router.navigateTo("MAIN");
+                
+            } catch (Exception ex) {
+                System.err.println("Fail to login: " + ex.getMessage());
+
+            }
+        });
     }
 
 }

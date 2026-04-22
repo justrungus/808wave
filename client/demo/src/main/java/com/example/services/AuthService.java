@@ -47,4 +47,25 @@ public class AuthService {
             throw new Exception(response.body());
         }
     }
+
+    public User login(String username, String password) throws Exception{
+        Map<String, String> data = Map.of(
+            "username", username,
+            "password", password
+        );
+        String jsonBody = gson.toJson(data);
+
+        HttpRequest request = HttpRequest.newBuilder()
+            .uri(java.net.URI.create(BASE_URL + "/login"))
+            .header("Content-Type", "application/json")
+            .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+            .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 200) {
+            return gson.fromJson(response.body(), User.class);
+        } else {
+            throw new Exception(response.body());
+        }
+    }
 }
