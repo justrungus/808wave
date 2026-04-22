@@ -12,6 +12,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -25,11 +26,17 @@ public class MainContentPanel extends VBox{
 
     private Label profileName;
     
+    private StackPane contentArea;
+
+    //vistas
+    private UploadView uploadView;
+
     public MainContentPanel(){
         //estilo css custom del panel
         this.getStyleClass().add("glass-panel");
 
-        
+        //vistas
+        uploadView = new UploadView();
 
         //barra superior para arrastrar
         HBox topBar = new HBox(7);
@@ -45,8 +52,11 @@ public class MainContentPanel extends VBox{
             rightPill()
         );
 
+        //main content area
+        contentArea = new StackPane();
+        VBox.setVgrow(contentArea, Priority.ALWAYS);
 
-
+        this.getChildren().add(contentArea);
     }
 
     
@@ -96,6 +106,13 @@ public class MainContentPanel extends VBox{
         btnUpload.getStyleClass().add("pill-button");
 
         leftPill.getChildren().addAll(btnHome, btnLibrary, btnUpload);
+
+
+        //logica boton upload
+        btnUpload.setOnAction(e -> {
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(uploadView);
+        });
 
         return leftPill;    
     }

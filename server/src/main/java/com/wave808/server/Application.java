@@ -12,14 +12,5 @@ public class Application {
 		
 		
 	}
-	
-	// @Bean
-	// CommandLineRunner initDatabase(UserService userService) {
-    // 	return args -> {
-    //     userService.registerUser("admin", "admin@808wave.com", "admin");
-    //     System.out.println("Admin creado");
-    // 	};
-	// }
-
 
 }

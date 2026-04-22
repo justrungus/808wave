@@ -73,7 +73,7 @@ public class LoginView extends VBox{
 
                 Router.navigateTo("MAIN");
                 
-            } catch (Exception ex) {
+            } catch (Exception ex) { 
                 System.err.println("Fail to login: " + ex.getMessage());
 
             }
