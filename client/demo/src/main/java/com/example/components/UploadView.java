@@ -25,13 +25,14 @@ public class UploadView extends VBox{
         this.setAlignment(Pos.TOP_CENTER);
 
         Label lblTitle = new Label("Upload New Track");
-        lblTitle.getStyleClass().add("slide-label"); 
+        lblTitle.getStyleClass().add("friends-header"); 
         
         //To do cambiar estilos 
 
 
         TextField txtTrackName = new TextField();
         txtTrackName.setPromptText("Track title");
+        txtTrackName.getStyleClass().add("now-playing-title");
         txtTrackName.setMaxWidth(400);
 
         TextField txtArtist = new TextField();

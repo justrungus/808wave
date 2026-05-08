@@ -127,7 +127,7 @@
 }
 
 
-/* Cabecera "Friends" tipo píldora */
+/* Cabecera de Friends */
 .friends-header {
     -fx-background-color: #B39DDB;
     -fx-text-fill: #4a4a4a;
@@ -144,9 +144,10 @@
 
 /* Divisores Online/Offline */
 .status-divider {
-    -fx-text-fill: #888;
+    -fx-text-fill: #B39DDB;
     -fx-font-size: 11px;
     -fx-alignment: center;
+    -fx-font-weight: bold;
 }
 
 /* Efecto al pasar el ratón sobre un amigo */
