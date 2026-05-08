@@ -57,7 +57,7 @@ public class UploadView extends VBox{
             if (selectedFile != null) {
                 this.audioFile = selectedFile;
                 lblAudioPath.setText(selectedFile.getName());
-                lblAudioPath.setStyle("-fx-text-fill: #2ecc71;"); // Verde éxito
+                lblAudioPath.setStyle("-fx-text-fill: #2ecc71;"); 
             }
         });
 
@@ -97,7 +97,7 @@ public class UploadView extends VBox{
             // TODO: Llamar al TrackService 
         });
 
-        // Agrupamos visualmente
+        
         VBox audioBox = new VBox(5, btnSelectAudio, lblAudioPath);
         audioBox.setAlignment(Pos.CENTER);
         
@@ -107,7 +107,7 @@ public class UploadView extends VBox{
         HBox filePickers = new HBox(40, audioBox, imageBox);
         filePickers.setAlignment(Pos.CENTER);
 
-        // Añadimos todo al VBox principal
+        
         this.getChildren().addAll(lblTitle, txtTrackName, txtArtist, filePickers, btnUpload);
     }
 

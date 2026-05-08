@@ -55,7 +55,7 @@ public class App extends Application {
         Scene scene = new Scene(root, width, height);
         scene.setFill(Color.TRANSPARENT);
 
-        // Verifica que esta ruta al CSS sea correcta según tu estructura
+        
         try {
             String css = getClass().getResource("/com/example/style.css").toExternalForm();
             scene.getStylesheets().add(css);
