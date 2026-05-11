@@ -38,6 +38,7 @@ build/
 client/target/
 *.class
 .DS_Store
+server/storage/
 
 postgres-data/
 pg-data/

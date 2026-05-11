@@ -1,9 +1,12 @@
 package com.example.components;
 
-
 import java.io.File;
 
-import atlantafx.base.theme.Styles;
+import com.example.core.Session;
+import com.example.models.TrackDTO;
+import com.example.services.TrackService;
+
+import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -14,105 +17,164 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-public class UploadView extends VBox{
-    
-    private File audioFile;
-    private File imageFile;
+public class UploadView extends VBox {
 
-    public UploadView(){
-        this.setSpacing(20);
-        this.setPadding(new Insets(40));
+    private final TrackService trackService = new TrackService();
+    private File audioFile;
+
+    public UploadView() {
+        this.setSpacing(15);
+        this.setPadding(new Insets(30));
         this.setAlignment(Pos.TOP_CENTER);
 
         Label lblTitle = new Label("Upload New Track");
-        lblTitle.getStyleClass().add("friends-header"); 
-        
-        //To do cambiar estilos 
+        lblTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #B39DDB;");
 
+        TextField txtTitle   = buildField("Track title");
+        TextField txtGenre   = buildField("Genre");
+        TextField txtAlbum   = buildField("Album");
+        TextField txtBpm     = buildField("BPM");
+        TextField txtKey     = buildField("Musical key  (e.g. Am, C#)");
 
-        TextField txtTrackName = new TextField();
-        txtTrackName.setPromptText("Track title");
-        txtTrackName.getStyleClass().add("now-playing-title");
-        txtTrackName.setMaxWidth(400);
-
-        TextField txtArtist = new TextField();
-        txtArtist.setPromptText("Artist name");
-        txtArtist.setMaxWidth(400);
-
+        // Selector de audio estilo pill
         Label lblAudioPath = new Label("No audio selected");
+        lblAudioPath.setStyle("-fx-text-fill: gray; -fx-font-size: 12px;");
+
         Button btnSelectAudio = new Button("Select Audio (.wav, .mp3)");
-        
-        Label lblImagePath = new Label("No cover art selected");
-        Button btnSelectImage = new Button("Select Cover Art (.jpg, .png)");
+        btnSelectAudio.getStyleClass().add("pill-button");
+        btnSelectAudio.setStyle("-fx-background-color: #B39DDB; -fx-text-fill: #1e1e1e;");
 
         btnSelectAudio.setOnAction(e -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Select Audio File");
-            fileChooser.getExtensionFilters().addAll(
+            FileChooser fc = new FileChooser();
+            fc.setTitle("Select Audio File");
+            fc.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Audio Files", "*.wav", "*.mp3")
             );
-
             Stage stage = (Stage) this.getScene().getWindow();
-            File selectedFile = fileChooser.showOpenDialog(stage);
-            
-            if (selectedFile != null) {
-                this.audioFile = selectedFile;
-                lblAudioPath.setText(selectedFile.getName());
-                lblAudioPath.setStyle("-fx-text-fill: #2ecc71;"); 
+            File selected = fc.showOpenDialog(stage);
+            if (selected != null) {
+                audioFile = selected;
+                lblAudioPath.setText(selected.getName());
+                lblAudioPath.setStyle("-fx-text-fill: #2ecc71; -fx-font-size: 12px;");
             }
         });
 
-        btnSelectImage.setOnAction(e -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Select Cover Art");
-            fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
-            );
-            
-            Stage stage = (Stage) this.getScene().getWindow();
-            File selectedFile = fileChooser.showOpenDialog(stage);
-            
-            if (selectedFile != null) {
-                this.imageFile = selectedFile;
-                lblImagePath.setText(selectedFile.getName());
-                lblImagePath.setStyle("-fx-text-fill: #2ecc71;");
-            }
-        });
+        HBox audioBox = new HBox(15, btnSelectAudio, lblAudioPath);
+        audioBox.setAlignment(Pos.CENTER_LEFT);
+        audioBox.setMaxWidth(400);
 
+        // Feedback
+        Label lblFeedback = new Label();
+        lblFeedback.setStyle("-fx-font-size: 12px;");
 
-    Button btnUpload = new Button("Upload to Server");
-        btnUpload.getStyleClass().addAll(Styles.ACCENT, Styles.LARGE);
-        
+        // Botón upload
+        Button btnUpload = new Button("Upload to Server");
+        btnUpload.getStyleClass().add("pill-button");
+        btnUpload.setStyle("-fx-background-color: #B39DDB; -fx-text-fill: #1e1e1e; -fx-font-size: 14px; -fx-padding: 10 30 10 30;");
+
         btnUpload.setOnAction(e -> {
-            String title = txtTrackName.getText();
-            String artist = txtArtist.getText();
+            String title   = txtTitle.getText();
+            String genre   = txtGenre.getText();
+            String album   = txtAlbum.getText();
+            String bpmText = txtBpm.getText();
+            String key     = txtKey.getText();
 
-            // Validacion 
-            if (title.isEmpty() || artist.isEmpty() || audioFile == null || imageFile == null) {
-                System.out.println("ERROR: Faltan datos por rellenar.");
-                // TODO alerta al usuario
+            if (title.isEmpty() || audioFile == null) {
+                setFeedback(lblFeedback, "Title and audio file are required.", false);
                 return;
             }
 
-            System.out.println("Preparando para subir: " + title + " de " + artist);
-            // TODO: Llamar al TrackService 
+            Integer bpm = null;
+            if (!bpmText.isEmpty()) {
+                try {
+                    bpm = Integer.parseInt(bpmText);
+                } catch (NumberFormatException ex) {
+                    setFeedback(lblFeedback, "BPM must be a number.", false);
+                    return;
+                }
+            }
+
+            btnUpload.setDisable(true);
+            setFeedback(lblFeedback, "Uploading...", true);
+
+            final Integer finalBpm = bpm;
+            final File finalAudio = audioFile;
+            System.out.println("userId en sesión: " + Session.getInstance().getUserId());
+            Task<TrackDTO> uploadTask = new Task<>() {
+                @Override
+                protected TrackDTO call() throws Exception {
+                    return trackService.upload(
+                        title, genre, album, finalBpm, key,
+                        Session.getInstance().getUserId(),
+                        finalAudio
+                    );
+                }
+            };
+
+            uploadTask.setOnSucceeded(event -> {
+                setFeedback(lblFeedback, "Track uploaded successfully!", true);
+                clearForm(txtTitle, txtGenre, txtAlbum, txtBpm, txtKey, lblAudioPath);
+                audioFile = null;
+                btnUpload.setDisable(false);
+            });
+
+            uploadTask.setOnFailed(event -> {
+                setFeedback(lblFeedback, uploadTask.getException().getMessage(), false);
+                btnUpload.setDisable(false);
+            });
+
+            new Thread(uploadTask).start();
         });
 
-        
-        VBox audioBox = new VBox(5, btnSelectAudio, lblAudioPath);
-        audioBox.setAlignment(Pos.CENTER);
-        
-        VBox imageBox = new VBox(5, btnSelectImage, lblImagePath);
-        imageBox.setAlignment(Pos.CENTER);
-
-        HBox filePickers = new HBox(40, audioBox, imageBox);
-        filePickers.setAlignment(Pos.CENTER);
-
-        
-        this.getChildren().addAll(lblTitle, txtTrackName, txtArtist, filePickers, btnUpload);
+        this.getChildren().addAll(
+            lblTitle,
+            txtTitle,
+            buildRow(txtGenre, txtAlbum),
+            buildRow(txtBpm, txtKey),
+            audioBox,
+            lblFeedback,
+            btnUpload
+        );
     }
 
+    private TextField buildField(String prompt) {
+        TextField field = new TextField();
+        field.setPromptText(prompt);
+        field.setMaxWidth(400);
+        field.setStyle(
+            "-fx-background-color: rgba(255,255,255,0.1);" +
+            "-fx-text-fill: #B39DDB;" +
+            "-fx-prompt-text-fill: gray;" +
+            "-fx-background-radius: 10;"
+        );
+        field.getStyleClass().add("now-playing-title");
+        return field;
+    }
 
+    private HBox buildRow(TextField... fields) {
+        HBox row = new HBox(15);
+        row.setAlignment(Pos.CENTER);
+        row.setMaxWidth(400);
+        for (TextField f : fields) {
+            f.setMaxWidth(192);
+            row.getChildren().add(f);
+        }
+        return row;
+    }
 
-    
+    private void setFeedback(Label label, String message, boolean success) {
+        label.setText(message);
+        label.setStyle("-fx-font-size: 12px; -fx-text-fill: " + (success ? "#2ecc71" : "#e74c3c") + ";");
+    }
+
+    private void clearForm(TextField txtTitle, TextField txtGenre, TextField txtAlbum,
+                           TextField txtBpm, TextField txtKey, Label lblAudioPath) {
+        txtTitle.clear();
+        txtGenre.clear();
+        txtAlbum.clear();
+        txtBpm.clear();
+        txtKey.clear();
+        lblAudioPath.setText("No audio selected");
+        lblAudioPath.setStyle("-fx-text-fill: gray; -fx-font-size: 12px;");
+    }
 }

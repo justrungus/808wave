@@ -77,6 +77,7 @@ public class LoginView extends VBox{
 
             loginTask.setOnSucceeded(event -> {
                 Session.getInstance().setUsername(loginTask.getValue().getUsername());
+                Session.getInstance().setUserId(loginTask.getValue().getUserId());
                 Router.navigateTo("MAIN");
                 btnLogin.setDisable(false);
             });
