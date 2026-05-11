@@ -1,10 +1,14 @@
 package com.wave808.server.controllers;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.wave808.server.dto.AuthRequest;
 import com.wave808.server.dto.UserDTO;
 import com.wave808.server.services.UserService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -16,22 +20,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody AuthRequest request){
-        try{
-            UserDTO user = userService.register(request.getUsername(), request.getEmail(), request.getPassword());
-            return ResponseEntity.ok(user);
-        }catch (RuntimeException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<UserDTO> register(@RequestBody AuthRequest request) {
+        UserDTO user = userService.register(request.getUsername(), request.getEmail(), request.getPassword());
+        return ResponseEntity.ok(user);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody AuthRequest request){
-        try{
-            UserDTO user = userService.login(request.getUsername(), request.getPassword());
-            return ResponseEntity.ok(user);
-        }catch (RuntimeException e){
-            return ResponseEntity.status(401).body(e.getMessage());
-        }
+    public ResponseEntity<UserDTO> login(@RequestBody AuthRequest request) {
+        UserDTO user = userService.login(request.getUsername(), request.getPassword());
+        return ResponseEntity.ok(user);
     }
 }
