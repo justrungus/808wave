@@ -24,7 +24,7 @@ public class Track {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long trackId;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String title;
 
     private String genre;
