@@ -43,6 +43,9 @@ public class Track {
 
     @Column(name = "uploaded_at")
     private java.time.LocalDateTime uploadedAt = java.time.LocalDateTime.now();
+
+    @Column(name ="cover_path")
+    private String coverPath;
     
 
 

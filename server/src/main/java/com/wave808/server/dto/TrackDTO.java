@@ -14,4 +14,5 @@ public class TrackDTO {
     private Integer bpm;
     private String musicalKey;
     private String uploaderUsername;
+    private String coverPath;
 }

@@ -19,38 +19,52 @@ public class TrackService {
 
     public TrackDTO upload(String title, String genre, String album,
                            Integer bpm, String musicalKey,
-                           Long userId, File audioFile) throws Exception {
+                           Long userId, File audioFile, File coverImage) throws Exception {
 
         String boundary = UUID.randomUUID().toString();
 
         byte[] audioBytes = Files.readAllBytes(audioFile.toPath());
 
-        String body = "--" + boundary + "\r\n" +
-                "Content-Disposition: form-data; name=\"title\"\r\n\r\n" + title + "\r\n" +
-                "--" + boundary + "\r\n" +
-                "Content-Disposition: form-data; name=\"genre\"\r\n\r\n" + genre + "\r\n" +
-                "--" + boundary + "\r\n" +
-                "Content-Disposition: form-data; name=\"album\"\r\n\r\n" + album + "\r\n" +
-                "--" + boundary + "\r\n" +
-                "Content-Disposition: form-data; name=\"bpm\"\r\n\r\n" + bpm + "\r\n" +
-                "--" + boundary + "\r\n" +
-                "Content-Disposition: form-data; name=\"musicalKey\"\r\n\r\n" + musicalKey + "\r\n" +
-                "--" + boundary + "\r\n" +
-                "Content-Disposition: form-data; name=\"userId\"\r\n\r\n" + userId + "\r\n";
+        StringBuilder textParts = new StringBuilder();
+        textParts.append(textPart(boundary, "title", title));
+        textParts.append(textPart(boundary, "genre", genre == null ? "" : genre));
+        textParts.append(textPart(boundary, "album", album == null ? "" : album));
+        textParts.append(textPart(boundary, "bpm", bpm == null ? "" : bpm.toString()));
+        textParts.append(textPart(boundary, "musicalKey", musicalKey == null ? "" : musicalKey));
+        textParts.append(textPart(boundary, "userId", userId.toString()));
 
-        byte[] bodyStart = body.getBytes();
-        String fileHeader = "--" + boundary + "\r\n" +
+        byte[] textBytes = textParts.toString().getBytes();
+
+        //  audio
+        String audioHeader = "--" + boundary + "\r\n" +
                 "Content-Disposition: form-data; name=\"audio\"; filename=\"" + audioFile.getName() + "\"\r\n" +
                 "Content-Type: audio/mpeg\r\n\r\n";
-        byte[] fileHeaderBytes = fileHeader.getBytes();
-        String bodyEnd = "\r\n--" + boundary + "--\r\n";
-        byte[] bodyEndBytes = bodyEnd.getBytes();
+        byte[] audioHeaderBytes = audioHeader.getBytes();
 
-        byte[] fullBody = new byte[bodyStart.length + fileHeaderBytes.length + audioBytes.length + bodyEndBytes.length];
-        System.arraycopy(bodyStart, 0, fullBody, 0, bodyStart.length);
-        System.arraycopy(fileHeaderBytes, 0, fullBody, bodyStart.length, fileHeaderBytes.length);
-        System.arraycopy(audioBytes, 0, fullBody, bodyStart.length + fileHeaderBytes.length, audioBytes.length);
-        System.arraycopy(bodyEndBytes, 0, fullBody, bodyStart.length + fileHeaderBytes.length + audioBytes.length, bodyEndBytes.length);
+        //  imagen 
+        byte[] coverBytes = new byte[0];
+        byte[] coverHeaderBytes = new byte[0];
+        if (coverImage != null) {
+            coverBytes = Files.readAllBytes(coverImage.toPath());
+            String coverHeader = "\r\n--" + boundary + "\r\n" +
+                    "Content-Disposition: form-data; name=\"cover\"; filename=\"" + coverImage.getName() + "\"\r\n" +
+                    "Content-Type: image/jpeg\r\n\r\n";
+            coverHeaderBytes = coverHeader.getBytes();
+        }
+
+        byte[] ending = ("\r\n--" + boundary + "--\r\n").getBytes();
+
+        // Montar el cuerpo completo
+        int totalSize = textBytes.length + audioHeaderBytes.length + audioBytes.length
+                + coverHeaderBytes.length + coverBytes.length + ending.length;
+        byte[] fullBody = new byte[totalSize];
+        int offset = 0;
+        offset = copy(fullBody, textBytes, offset);
+        offset = copy(fullBody, audioHeaderBytes, offset);
+        offset = copy(fullBody, audioBytes, offset);
+        offset = copy(fullBody, coverHeaderBytes, offset);
+        offset = copy(fullBody, coverBytes, offset);
+        copy(fullBody, ending, offset);
 
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/upload"))
@@ -65,5 +79,16 @@ public class TrackService {
         } else {
             throw new Exception(response.body());
         }
+    }
+
+    private String textPart(String boundary, String name, String value) {
+        return "--" + boundary + "\r\n" +
+                "Content-Disposition: form-data; name=\"" + name + "\"\r\n\r\n" +
+                value + "\r\n";
+    }
+
+    private int copy(byte[] dest, byte[] src, int offset) {
+        System.arraycopy(src, 0, dest, offset, src.length);
+        return offset + src.length;
     }
 }

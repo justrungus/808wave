@@ -39,6 +39,6 @@ client/target/
 *.class
 .DS_Store
 server/storage/
-
+storage/audios
 postgres-data/
 pg-data/

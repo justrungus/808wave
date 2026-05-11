@@ -1,27 +1,27 @@
 package com.wave808.server.services;
 
 import java.io.IOException;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import com.wave808.server.models.User;
-import com.wave808.server.models.Track;
-import com.wave808.server.dto.TrackDTO;
-import com.wave808.server.repositories.TrackRepository;
-import com.wave808.server.repositories.UserRepository;
-
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.wave808.server.dto.TrackDTO;
+import com.wave808.server.models.Track;
+import com.wave808.server.models.User;
+import com.wave808.server.repositories.TrackRepository;
+import com.wave808.server.repositories.UserRepository;
+
 @Service
 public class TrackService {
-    
+
     private final TrackRepository trackRepository;
     private final UserRepository userRepository;
-    
+
     @Value("${file.upload-dir}")
     private String uploadDir;
 
@@ -30,20 +30,32 @@ public class TrackService {
         this.userRepository = userRepository;
     }
 
-    public TrackDTO uploadTrack(String title, String genre, String album, 
-        Integer bpm, String musicalKey, Long userId, 
-        MultipartFile audioFile)throws IOException {
-            User uploader = userRepository.findById(userId)
+    public TrackDTO uploadTrack(String title, String genre, String album,
+                                Integer bpm, String musicalKey,
+                                Long userId, MultipartFile audioFile,
+                                MultipartFile coverImage) throws IOException {
+
+        User uploader = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-            
+
         Path uploadPath = Paths.get(uploadDir);
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
 
-        String fileName = UUID.randomUUID() + "_" + audioFile.getOriginalFilename();
-        Path filePath = uploadPath.resolve(fileName);
-        Files.copy(audioFile.getInputStream(), filePath);
+        // audio
+        String audioFileName = UUID.randomUUID() + "_" + audioFile.getOriginalFilename();
+        Path audioPath = uploadPath.resolve(audioFileName);
+        Files.copy(audioFile.getInputStream(), audioPath);
+
+        // portada
+        String coverFilePath = null;
+        if (coverImage != null && !coverImage.isEmpty()) {
+            String coverFileName = UUID.randomUUID() + "_" + coverImage.getOriginalFilename();
+            Path coverPath = uploadPath.resolve(coverFileName);
+            Files.copy(coverImage.getInputStream(), coverPath);
+            coverFilePath = coverPath.toString();
+        }
 
         Track track = new Track();
         track.setTitle(title);
@@ -51,7 +63,8 @@ public class TrackService {
         track.setAlbum(album);
         track.setBpm(bpm);
         track.setMusicalKey(musicalKey);
-        track.setFilePath(filePath.toString());
+        track.setFilePath(audioPath.toString());
+        track.setCoverPath(coverFilePath);
         track.setUploader(uploader);
 
         Track saved = trackRepository.save(track);
@@ -63,8 +76,8 @@ public class TrackService {
                 saved.getAlbum(),
                 saved.getBpm(),
                 saved.getMusicalKey(),
-                saved.getUploader().getUsername()
+                saved.getUploader().getUsername(),
+                saved.getCoverPath()
         );
     }
-
 }

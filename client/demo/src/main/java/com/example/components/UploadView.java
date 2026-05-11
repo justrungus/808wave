@@ -21,6 +21,7 @@ public class UploadView extends VBox {
 
     private final TrackService trackService = new TrackService();
     private File audioFile;
+    private File coverFile;
 
     public UploadView() {
         this.setSpacing(15);
@@ -30,28 +31,23 @@ public class UploadView extends VBox {
         Label lblTitle = new Label("Upload New Track");
         lblTitle.setStyle("-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #B39DDB;");
 
-        TextField txtTitle   = buildField("Track title");
-        TextField txtGenre   = buildField("Genre");
-        TextField txtAlbum   = buildField("Album");
-        TextField txtBpm     = buildField("BPM");
-        TextField txtKey     = buildField("Musical key  (e.g. Am, C#)");
+        TextField txtTitle = buildField("Track title");
+        TextField txtGenre = buildField("Genre");
+        TextField txtAlbum = buildField("Album");
+        TextField txtBpm   = buildField("BPM");
+        TextField txtKey   = buildField("Musical key (e.g. Am, C#)");
 
-        // Selector de audio estilo pill
+        // Selector de audio
         Label lblAudioPath = new Label("No audio selected");
         lblAudioPath.setStyle("-fx-text-fill: gray; -fx-font-size: 12px;");
-
-        Button btnSelectAudio = new Button("Select Audio (.wav, .mp3)");
-        btnSelectAudio.getStyleClass().add("pill-button");
-        btnSelectAudio.setStyle("-fx-background-color: #B39DDB; -fx-text-fill: #1e1e1e;");
-
+        Button btnSelectAudio = buildFileButton("Select Audio (.wav, .mp3)");
         btnSelectAudio.setOnAction(e -> {
             FileChooser fc = new FileChooser();
             fc.setTitle("Select Audio File");
             fc.getExtensionFilters().add(
                 new FileChooser.ExtensionFilter("Audio Files", "*.wav", "*.mp3")
             );
-            Stage stage = (Stage) this.getScene().getWindow();
-            File selected = fc.showOpenDialog(stage);
+            File selected = fc.showOpenDialog((Stage) this.getScene().getWindow());
             if (selected != null) {
                 audioFile = selected;
                 lblAudioPath.setText(selected.getName());
@@ -59,15 +55,35 @@ public class UploadView extends VBox {
             }
         });
 
+        // Selector de portada
+        Label lblCoverPath = new Label("No cover selected (optional)");
+        lblCoverPath.setStyle("-fx-text-fill: gray; -fx-font-size: 12px;");
+        Button btnSelectCover = buildFileButton("Select Cover Art (.jpg, .png)");
+        btnSelectCover.setOnAction(e -> {
+            FileChooser fc = new FileChooser();
+            fc.setTitle("Select Cover Art");
+            fc.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+            );
+            File selected = fc.showOpenDialog((Stage) this.getScene().getWindow());
+            if (selected != null) {
+                coverFile = selected;
+                lblCoverPath.setText(selected.getName());
+                lblCoverPath.setStyle("-fx-text-fill: #2ecc71; -fx-font-size: 12px;");
+            }
+        });
+
         HBox audioBox = new HBox(15, btnSelectAudio, lblAudioPath);
         audioBox.setAlignment(Pos.CENTER_LEFT);
         audioBox.setMaxWidth(400);
 
-        // Feedback
+        HBox coverBox = new HBox(15, btnSelectCover, lblCoverPath);
+        coverBox.setAlignment(Pos.CENTER_LEFT);
+        coverBox.setMaxWidth(400);
+
         Label lblFeedback = new Label();
         lblFeedback.setStyle("-fx-font-size: 12px;");
 
-        // Botón upload
         Button btnUpload = new Button("Upload to Server");
         btnUpload.getStyleClass().add("pill-button");
         btnUpload.setStyle("-fx-background-color: #B39DDB; -fx-text-fill: #1e1e1e; -fx-font-size: 14px; -fx-padding: 10 30 10 30;");
@@ -99,22 +115,24 @@ public class UploadView extends VBox {
 
             final Integer finalBpm = bpm;
             final File finalAudio = audioFile;
-            System.out.println("userId en sesión: " + Session.getInstance().getUserId());
+            final File finalCover = coverFile;
+
             Task<TrackDTO> uploadTask = new Task<>() {
                 @Override
                 protected TrackDTO call() throws Exception {
                     return trackService.upload(
                         title, genre, album, finalBpm, key,
                         Session.getInstance().getUserId(),
-                        finalAudio
+                        finalAudio, finalCover
                     );
                 }
             };
 
             uploadTask.setOnSucceeded(event -> {
                 setFeedback(lblFeedback, "Track uploaded successfully!", true);
-                clearForm(txtTitle, txtGenre, txtAlbum, txtBpm, txtKey, lblAudioPath);
+                clearForm(txtTitle, txtGenre, txtAlbum, txtBpm, txtKey, lblAudioPath, lblCoverPath);
                 audioFile = null;
+                coverFile = null;
                 btnUpload.setDisable(false);
             });
 
@@ -132,6 +150,7 @@ public class UploadView extends VBox {
             buildRow(txtGenre, txtAlbum),
             buildRow(txtBpm, txtKey),
             audioBox,
+            coverBox,
             lblFeedback,
             btnUpload
         );
@@ -151,6 +170,13 @@ public class UploadView extends VBox {
         return field;
     }
 
+    private Button buildFileButton(String text) {
+        Button btn = new Button(text);
+        btn.getStyleClass().add("pill-button");
+        btn.setStyle("-fx-background-color: #B39DDB; -fx-text-fill: #1e1e1e;");
+        return btn;
+    }
+
     private HBox buildRow(TextField... fields) {
         HBox row = new HBox(15);
         row.setAlignment(Pos.CENTER);
@@ -168,7 +194,8 @@ public class UploadView extends VBox {
     }
 
     private void clearForm(TextField txtTitle, TextField txtGenre, TextField txtAlbum,
-                           TextField txtBpm, TextField txtKey, Label lblAudioPath) {
+                           TextField txtBpm, TextField txtKey,
+                           Label lblAudioPath, Label lblCoverPath) {
         txtTitle.clear();
         txtGenre.clear();
         txtAlbum.clear();
@@ -176,5 +203,7 @@ public class UploadView extends VBox {
         txtKey.clear();
         lblAudioPath.setText("No audio selected");
         lblAudioPath.setStyle("-fx-text-fill: gray; -fx-font-size: 12px;");
+        lblCoverPath.setText("No cover selected (optional)");
+        lblCoverPath.setStyle("-fx-text-fill: gray; -fx-font-size: 12px;");
     }
 }
