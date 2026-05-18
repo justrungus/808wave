@@ -28,7 +28,6 @@ public class Track {
     private String title;
 
     private String genre;
-    private String album;
     private Integer bpm;
 
     @Column(name = "musical_key")
@@ -47,6 +46,7 @@ public class Track {
     @Column(name ="cover_path")
     private String coverPath;
     
-
+    @Column(name ="play_count", nullable = false)
+    private Long playCount = 0L;
 
 }

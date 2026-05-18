@@ -33,7 +33,6 @@ public class UploadView extends VBox {
 
         TextField txtTitle = buildField("Track title");
         TextField txtGenre = buildField("Genre");
-        TextField txtAlbum = buildField("Album");
         TextField txtBpm   = buildField("BPM");
         TextField txtKey   = buildField("Musical key (e.g. Am, C#)");
 
@@ -91,7 +90,6 @@ public class UploadView extends VBox {
         btnUpload.setOnAction(e -> {
             String title   = txtTitle.getText();
             String genre   = txtGenre.getText();
-            String album   = txtAlbum.getText();
             String bpmText = txtBpm.getText();
             String key     = txtKey.getText();
 
@@ -121,7 +119,7 @@ public class UploadView extends VBox {
                 @Override
                 protected TrackDTO call() throws Exception {
                     return trackService.upload(
-                        title, genre, album, finalBpm, key,
+                        title, genre, finalBpm, key,
                         Session.getInstance().getUserId(),
                         finalAudio, finalCover
                     );
@@ -130,7 +128,7 @@ public class UploadView extends VBox {
 
             uploadTask.setOnSucceeded(event -> {
                 setFeedback(lblFeedback, "Track uploaded successfully!", true);
-                clearForm(txtTitle, txtGenre, txtAlbum, txtBpm, txtKey, lblAudioPath, lblCoverPath);
+                clearForm(txtTitle, txtGenre, txtBpm, txtKey, lblAudioPath, lblCoverPath);
                 audioFile = null;
                 coverFile = null;
                 btnUpload.setDisable(false);
@@ -147,7 +145,6 @@ public class UploadView extends VBox {
         this.getChildren().addAll(
             lblTitle,
             txtTitle,
-            buildRow(txtGenre, txtAlbum),
             buildRow(txtBpm, txtKey),
             audioBox,
             coverBox,
@@ -193,12 +190,11 @@ public class UploadView extends VBox {
         label.setStyle("-fx-font-size: 12px; -fx-text-fill: " + (success ? "#2ecc71" : "#e74c3c") + ";");
     }
 
-    private void clearForm(TextField txtTitle, TextField txtGenre, TextField txtAlbum,
+    private void clearForm(TextField txtTitle, TextField txtGenre,
                            TextField txtBpm, TextField txtKey,
                            Label lblAudioPath, Label lblCoverPath) {
         txtTitle.clear();
         txtGenre.clear();
-        txtAlbum.clear();
         txtBpm.clear();
         txtKey.clear();
         lblAudioPath.setText("No audio selected");

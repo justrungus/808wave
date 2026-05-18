@@ -30,7 +30,7 @@ public class TrackService {
         this.userRepository = userRepository;
     }
 
-    public TrackDTO uploadTrack(String title, String genre, String album,
+    public TrackDTO uploadTrack(String title, String genre,
                                 Integer bpm, String musicalKey,
                                 Long userId, MultipartFile audioFile,
                                 MultipartFile coverImage) throws IOException {
@@ -60,7 +60,6 @@ public class TrackService {
         Track track = new Track();
         track.setTitle(title);
         track.setGenre(genre);
-        track.setAlbum(album);
         track.setBpm(bpm);
         track.setMusicalKey(musicalKey);
         track.setFilePath(audioPath.toString());
@@ -73,7 +72,6 @@ public class TrackService {
                 saved.getTrackId(),
                 saved.getTitle(),
                 saved.getGenre(),
-                saved.getAlbum(),
                 saved.getBpm(),
                 saved.getMusicalKey(),
                 saved.getUploader().getUsername(),

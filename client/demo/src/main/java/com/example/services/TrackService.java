@@ -17,7 +17,7 @@ public class TrackService {
     private final Gson gson = new Gson();
     private final String BASE_URL = "http://localhost:8080/api/tracks";
 
-    public TrackDTO upload(String title, String genre, String album,
+    public TrackDTO upload(String title, String genre,
                            Integer bpm, String musicalKey,
                            Long userId, File audioFile, File coverImage) throws Exception {
 
@@ -27,8 +27,7 @@ public class TrackService {
 
         StringBuilder textParts = new StringBuilder();
         textParts.append(textPart(boundary, "title", title));
-        textParts.append(textPart(boundary, "genre", genre == null ? "" : genre));
-        textParts.append(textPart(boundary, "album", album == null ? "" : album));
+        textParts.append(textPart(boundary, "genre", genre == null ? "" : genre));   
         textParts.append(textPart(boundary, "bpm", bpm == null ? "" : bpm.toString()));
         textParts.append(textPart(boundary, "musicalKey", musicalKey == null ? "" : musicalKey));
         textParts.append(textPart(boundary, "userId", userId.toString()));

@@ -24,7 +24,6 @@ public class TrackController {
     public ResponseEntity<TrackDTO> upload(
             @RequestParam("title") String title,
             @RequestParam("genre") String genre,
-            @RequestParam("album") String album,
             @RequestParam("bpm") Integer bpm,
             @RequestParam("musicalKey") String musicalKey,
             @RequestParam("userId") Long userId,
@@ -32,7 +31,7 @@ public class TrackController {
             @RequestParam(value = "cover", required = false) MultipartFile coverImage) throws Exception {
 
         TrackDTO track = trackService.uploadTrack(
-            title, genre, album, bpm, musicalKey, userId, audioFile, coverImage
+            title, genre, bpm, musicalKey, userId, audioFile, coverImage
         );
         return ResponseEntity.ok(track);
     }

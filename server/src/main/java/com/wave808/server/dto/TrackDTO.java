@@ -10,7 +10,6 @@ public class TrackDTO {
     private Long id;
     private String title;
     private String genre;
-    private String album;
     private Integer bpm;
     private String musicalKey;
     private String uploaderUsername;
