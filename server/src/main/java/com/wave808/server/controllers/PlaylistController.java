@@ -1,0 +1,35 @@
+package com.wave808.server.controllers;
+
+import com.wave808.server.dto.PlaylistDTO;
+import com.wave808.server.services.PlaylistService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/playlists")
+public class PlaylistController {
+
+    private final PlaylistService playlistService;
+
+    public PlaylistController(PlaylistService playlistService) {
+        this.playlistService = playlistService;
+    }
+
+    @GetMapping("/mine/{userId}")
+    public ResponseEntity<List<PlaylistDTO>> getMyPlaylists(@PathVariable Long userId) {
+        return ResponseEntity.ok(playlistService.getMyPlaylists(userId));
+    }
+
+    @GetMapping("/saved/{userId}")
+    public ResponseEntity<List<PlaylistDTO>> getSavedPlaylists(@PathVariable Long userId) {
+        return ResponseEntity.ok(playlistService.getSavedPlaylists(userId));
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<Void> savePlaylist(@RequestBody Map<String, Long> body) {
+        playlistService.savePlaylist(body.get("userId"), body.get("playlistId"));
+        return ResponseEntity.ok().build();
+    }
+}

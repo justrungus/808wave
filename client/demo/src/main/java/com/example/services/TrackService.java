@@ -1,15 +1,18 @@
 package com.example.services;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.UUID;
 
 import com.example.models.TrackDTO;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class TrackService {
 
@@ -17,9 +20,39 @@ public class TrackService {
     private final Gson gson = new Gson();
     private final String BASE_URL = "http://localhost:8080/api/tracks";
 
+    public List<TrackDTO> getRecentTracks() throws Exception{
+        return getList(BASE_URL + "/recent");
+    }
+
+    public List<TrackDTO> getTopTracks() throws Exception {
+        return getList(BASE_URL + "/top");
+    }
+
+    public List<TrackDTO> getTracksByUser(Long userId) throws Exception{
+        return getList(BASE_URL + "/user/" + userId);
+    }
+
+    public List<TrackDTO> getLikedTracks(Long userId) throws Exception{
+        return getList(BASE_URL + "/liked/" + userId);
+    }
+
+    private List<TrackDTO> getList(String url) throws Exception{
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 200) {
+            Type listType = new TypeToken<List<TrackDTO>>() {}.getType();
+            return gson.fromJson(response.body(), listType);
+        } else {
+            throw new Exception(response.body());
+        }
+    }
+
     public TrackDTO upload(String title, String genre,
-                           Integer bpm, String musicalKey,
-                           Long userId, File audioFile, File coverImage) throws Exception {
+                            Integer bpm, String musicalKey,
+                            Long userId, File audioFile, File coverImage) throws Exception {
 
         String boundary = UUID.randomUUID().toString();
 

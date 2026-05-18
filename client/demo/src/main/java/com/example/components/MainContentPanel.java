@@ -19,6 +19,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 
+
 public class MainContentPanel extends VBox{
 
     private double xOffset = 0;
@@ -57,6 +58,7 @@ public class MainContentPanel extends VBox{
         VBox.setVgrow(contentArea, Priority.ALWAYS);
 
         this.getChildren().add(contentArea);
+        contentArea.getChildren().add(new HomeView());
     }
 
     
@@ -107,6 +109,16 @@ public class MainContentPanel extends VBox{
 
         leftPill.getChildren().addAll(btnHome, btnLibrary, btnUpload);
 
+
+        btnHome.setOnAction(e -> {
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(new HomeView());
+        });
+
+        btnLibrary.setOnAction(e -> {
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(new LibraryView());
+        });
 
         //logica boton upload
         btnUpload.setOnAction(e -> {
