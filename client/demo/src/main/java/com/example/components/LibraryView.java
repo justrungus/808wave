@@ -3,7 +3,9 @@ package com.example.components;
 import java.util.List;
 
 import com.example.core.Session;
+import com.example.models.PlaylistDTO;
 import com.example.models.TrackDTO;
+import com.example.services.PlaylistService;
 import com.example.services.TrackService;
 
 import javafx.concurrent.Task;
@@ -16,6 +18,7 @@ import javafx.scene.layout.VBox;
 public class LibraryView extends VBox{
     
     private final TrackService trackService = new TrackService();
+    private final PlaylistService playlistService = new PlaylistService();
 
     public LibraryView(){
         this.setSpacing(10);
@@ -34,10 +37,11 @@ public class LibraryView extends VBox{
 
         Task<LibraryData> task = new Task<>(){
             @Override
-            protected LibraryData call() throws Exception{
+            protected LibraryData call() throws Exception {
                 List<TrackDTO> mine = trackService.getTracksByUser(userId);
                 List<TrackDTO> liked = trackService.getLikedTracks(userId);
-                return new LibraryData(mine, liked);
+                List<PlaylistDTO> playlists = playlistService.getMyPlaylists(userId);
+                return new LibraryData(mine, liked, playlists);
             }
         };
 
@@ -47,8 +51,9 @@ public class LibraryView extends VBox{
             VBox content = new VBox(25);
 
             content.getChildren().addAll(
-                new TrackSection("My tracks", data.mine),
-                new TrackSection("Liked Tracks", data.liked)
+                new TrackSection("My Tracks", data.mine),
+                new TrackSection("Liked Tracks", data.liked),
+                new PlaylistSection("My Playlists", data.playlists)
             );
 
             ScrollPane scroll = new ScrollPane(content);
@@ -64,8 +69,9 @@ public class LibraryView extends VBox{
 
     private static class LibraryData {
         List<TrackDTO> mine, liked;
-        LibraryData(List<TrackDTO> mine, List<TrackDTO> liked) {
-            this.mine = mine; this.liked = liked;
+        List<PlaylistDTO> playlists;
+        LibraryData(List<TrackDTO> mine, List<TrackDTO> liked, List<PlaylistDTO> playlists) {
+            this.mine = mine; this.liked = liked; this.playlists = playlists;
         }
     }
 

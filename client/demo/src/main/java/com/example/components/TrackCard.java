@@ -3,6 +3,7 @@ package com.example.components;
 import com.example.models.TrackDTO;
 
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -85,6 +86,46 @@ public class TrackCard extends VBox{
             "-fx-padding: 10;" +
             "-fx-cursor: hand;"
         ));
+
+        //añadir playlist
+        Button btnAddPlaylist = new Button("+");
+        btnAddPlaylist.setStyle(
+            "-fx-background-color: #B39DDB;" +
+            "-fx-text-fill: #1e1e1e;" +
+            "-fx-font-weight: bold;" +
+            "-fx-background-radius: 50%;" +
+            "-fx-min-width: 24px;" +
+            "-fx-min-height: 24px;" +
+            "-fx-cursor: hand;"
+        );
+        btnAddPlaylist.setVisible(false);
+
+        StackPane.setAlignment(btnAddPlaylist, Pos.TOP_RIGHT);
+        coverPane.getChildren().add(btnAddPlaylist);
+
+        this.setOnMouseEntered(e -> {
+            this.setStyle(
+                "-fx-background-color: rgba(179,157,219,0.15);" +
+                "-fx-background-radius: 12;" +
+                "-fx-padding: 10;" +
+                "-fx-cursor: hand;"
+            );
+            btnAddPlaylist.setVisible(true);
+        });
+        this.setOnMouseExited(e -> {
+            this.setStyle(
+                "-fx-background-color: rgba(255,255,255,0.05);" +
+                "-fx-background-radius: 12;" +
+                "-fx-padding: 10;" +
+                "-fx-cursor: hand;"
+            );
+            btnAddPlaylist.setVisible(false);
+        });
+
+        btnAddPlaylist.setOnAction(e -> {
+            e.consume();
+            new AddToPlaylistPopup(track).show();
+        });
 
         this.getChildren().addAll(coverPane, lblTitle, lblArtist);
     }
