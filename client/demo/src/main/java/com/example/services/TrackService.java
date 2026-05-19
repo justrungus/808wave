@@ -8,10 +8,12 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.example.models.TrackDTO;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 public class TrackService {
@@ -122,5 +124,20 @@ public class TrackService {
     private int copy(byte[] dest, byte[] src, int offset) {
         System.arraycopy(src, 0, dest, offset, src.length);
         return offset + src.length;
+    }
+
+    public boolean toggleLike(Long userId, Long trackId) throws Exception {
+        String body = gson.toJson(Map.of("userId", userId, "trackId", trackId));
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/like"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(body))
+                .build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 200) {
+            return gson.fromJson(response.body(), JsonObject.class).get("liked").getAsBoolean();
+        } else {
+            throw new Exception(response.body());
+        }
     }
 }

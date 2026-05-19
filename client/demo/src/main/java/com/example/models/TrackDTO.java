@@ -15,5 +15,5 @@ public class TrackDTO {
     public Integer getBpm() { return bpm; }
     public String getMusicalKey() { return musicalKey; }
     public String getUploaderUsername() { return uploaderUsername; }
-    public String getCoverPath() {return coverPath; }
+    public String getCoverPath() { return coverPath; }
 }

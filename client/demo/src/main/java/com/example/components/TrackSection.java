@@ -1,6 +1,7 @@
 package com.example.components;
 
 import java.util.List;
+import java.util.Set;
 
 import com.example.models.TrackDTO;
 
@@ -15,7 +16,7 @@ import javafx.scene.layout.VBox;
 
 public class TrackSection extends VBox {
 
-    public TrackSection(String title, List<TrackDTO> tracks, Runnable onSeeAll) {
+    public TrackSection(String title, List<TrackDTO> tracks, Set<Long> likedIds, Runnable onSeeAll) {
         this.setSpacing(12);
         this.setPadding(new Insets(0, 0, 20, 0));
 
@@ -65,7 +66,8 @@ public class TrackSection extends VBox {
             cardsRow.getChildren().add(empty);
         } else {
             for (TrackDTO track : tracks) {
-                cardsRow.getChildren().add(new TrackCard(track));
+                boolean liked = likedIds != null && likedIds.contains(track.getId());
+                cardsRow.getChildren().add(new TrackCard(track, liked));
             }
         }
 

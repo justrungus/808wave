@@ -13,6 +13,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class LibraryView extends VBox {
 
@@ -42,7 +44,10 @@ public class LibraryView extends VBox {
                 List<TrackDTO> mine = trackService.getTracksByUser(userId);
                 List<TrackDTO> liked = trackService.getLikedTracks(userId);
                 List<PlaylistDTO> playlists = playlistService.getMyPlaylists(userId);
-                return new LibraryData(mine, liked, playlists);
+                Set<Long> likedIds = liked.stream()
+                        .map(TrackDTO::getId)
+                        .collect(Collectors.toSet());
+                return new LibraryData(mine, liked, playlists, likedIds);
             }
         };
 
@@ -53,19 +58,19 @@ public class LibraryView extends VBox {
             VBox content = new VBox(25);
 
             content.getChildren().addAll(
-                new TrackSection("My Tracks", data.mine, () -> {
+                new TrackSection("My Tracks", data.mine, data.likedIds, () -> {
                     contentArea.getChildren().clear();
                     contentArea.getChildren().add(
-                        new SeeAllView("My Tracks", data.mine, () -> {
+                        new SeeAllView("My Tracks", data.mine, data.likedIds, () -> {
                             contentArea.getChildren().clear();
                             contentArea.getChildren().add(new LibraryView(contentArea));
                         })
                     );
                 }),
-                new TrackSection("Liked Tracks", data.liked, () -> {
+                new TrackSection("Liked Tracks", data.liked, data.likedIds, () -> {
                     contentArea.getChildren().clear();
                     contentArea.getChildren().add(
-                        new SeeAllView("Liked Tracks", data.liked, () -> {
+                        new SeeAllView("Liked Tracks", data.liked, data.likedIds, () -> {
                             contentArea.getChildren().clear();
                             contentArea.getChildren().add(new LibraryView(contentArea));
                         })
@@ -105,8 +110,9 @@ public class LibraryView extends VBox {
     private static class LibraryData {
         List<TrackDTO> mine, liked;
         List<PlaylistDTO> playlists;
-        LibraryData(List<TrackDTO> mine, List<TrackDTO> liked, List<PlaylistDTO> playlists) {
-            this.mine = mine; this.liked = liked; this.playlists = playlists;
+        Set<Long> likedIds;
+        LibraryData(List<TrackDTO> mine, List<TrackDTO> liked, List<PlaylistDTO> playlists, Set<Long> likedIds) {
+            this.mine = mine; this.liked = liked; this.playlists = playlists; this.likedIds = likedIds;
         }
     }
 }

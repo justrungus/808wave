@@ -1,7 +1,11 @@
 package com.example.components;
 
+import java.util.List;
+import java.util.Set;
+
 import com.example.models.PlaylistDTO;
 import com.example.models.TrackDTO;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -10,13 +14,12 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import java.util.List;
 
 public class SeeAllView extends VBox {
 
     private SeeAllView() {}
 
-    public SeeAllView(String title, List<TrackDTO> tracks, Runnable onBack) {
+    public SeeAllView(String title, List<TrackDTO> tracks, Set<Long> likedIds, Runnable onBack) {
         setup(title, onBack);
 
         FlowPane grid = new FlowPane();
@@ -30,7 +33,8 @@ public class SeeAllView extends VBox {
             grid.getChildren().add(empty);
         } else {
             for (TrackDTO track : tracks) {
-                grid.getChildren().add(new TrackCard(track));
+                boolean liked = likedIds != null && likedIds.contains(track.getId());
+                grid.getChildren().add(new TrackCard(track, liked));
             }
         }
 

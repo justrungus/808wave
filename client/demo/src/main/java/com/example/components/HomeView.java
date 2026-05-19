@@ -10,6 +10,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class HomeView extends VBox {
 
@@ -28,13 +30,19 @@ public class HomeView extends VBox {
     }
 
     private void loadContent() {
+        Long userId = Session.getInstance().getUserId();
+
         Task<HomeData> task = new Task<>() {
             @Override
             protected HomeData call() throws Exception {
                 List<TrackDTO> recent = trackService.getRecentTracks();
                 List<TrackDTO> top = trackService.getTopTracks();
-                List<TrackDTO> mine = trackService.getTracksByUser(Session.getInstance().getUserId());
-                return new HomeData(recent, top, mine);
+                List<TrackDTO> mine = trackService.getTracksByUser(userId);
+                List<TrackDTO> liked = trackService.getLikedTracks(userId);
+                Set<Long> likedIds = liked.stream()
+                        .map(TrackDTO::getId)
+                        .collect(Collectors.toSet());
+                return new HomeData(recent, top, mine, likedIds);
             }
         };
 
@@ -46,9 +54,9 @@ public class HomeView extends VBox {
             content.setPadding(new Insets(0));
 
             content.getChildren().addAll(
-                new TrackSection("Recently Added", data.recent, null),
-                new TrackSection("Most Played", data.top, null),
-                new TrackSection("Your Tracks", data.mine, null)
+                new TrackSection("Recently Added", data.recent, data.likedIds, null),
+                new TrackSection("Most Played", data.top, data.likedIds, null),
+                new TrackSection("Your Tracks", data.mine, data.likedIds, null)
             );
 
             ScrollPane scroll = new ScrollPane(content);
@@ -73,8 +81,9 @@ public class HomeView extends VBox {
 
     private static class HomeData {
         List<TrackDTO> recent, top, mine;
-        HomeData(List<TrackDTO> recent, List<TrackDTO> top, List<TrackDTO> mine) {
-            this.recent = recent; this.top = top; this.mine = mine;
+        Set<Long> likedIds;
+        HomeData(List<TrackDTO> recent, List<TrackDTO> top, List<TrackDTO> mine, Set<Long> likedIds) {
+            this.recent = recent; this.top = top; this.mine = mine; this.likedIds = likedIds;
         }
     }
 }
