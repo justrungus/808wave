@@ -49,4 +49,6 @@ public class Track {
     @Column(name ="play_count", nullable = false)
     private Long playCount = 0L;
 
+    @Column(length = 1000)
+    private String description;
 }

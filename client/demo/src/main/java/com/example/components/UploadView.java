@@ -11,6 +11,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -35,6 +36,18 @@ public class UploadView extends VBox {
         TextField txtGenre = buildField("Genre");
         TextField txtBpm   = buildField("BPM");
         TextField txtKey   = buildField("Musical key (e.g. Am, C#)");
+
+        TextArea txtDescription = new TextArea();
+        txtDescription.setPromptText("Description (optional)");
+        txtDescription.setMaxWidth(400);
+        txtDescription.setPrefRowCount(3);
+        txtDescription.setWrapText(true);
+        txtDescription.setStyle(
+            "-fx-background-color: rgba(255,255,255,0.1);" +
+            "-fx-text-fill: #B39DDB;" +
+            "-fx-prompt-text-fill: gray;" +
+            "-fx-background-radius: 10;"
+        );
 
         // Selector de audio
         Label lblAudioPath = new Label("No audio selected");
@@ -88,10 +101,11 @@ public class UploadView extends VBox {
         btnUpload.setStyle("-fx-background-color: #B39DDB; -fx-text-fill: #1e1e1e; -fx-font-size: 14px; -fx-padding: 10 30 10 30;");
 
         btnUpload.setOnAction(e -> {
-            String title   = txtTitle.getText();
-            String genre   = txtGenre.getText();
-            String bpmText = txtBpm.getText();
-            String key     = txtKey.getText();
+            String title       = txtTitle.getText();
+            String genre       = txtGenre.getText();
+            String bpmText     = txtBpm.getText();
+            String key         = txtKey.getText();
+            String description = txtDescription.getText();
 
             if (title.isEmpty() || audioFile == null) {
                 setFeedback(lblFeedback, "Title and audio file are required.", false);
@@ -119,7 +133,7 @@ public class UploadView extends VBox {
                 @Override
                 protected TrackDTO call() throws Exception {
                     return trackService.upload(
-                        title, genre, finalBpm, key,
+                        title, genre, finalBpm, key, description,
                         Session.getInstance().getUserId(),
                         finalAudio, finalCover
                     );
@@ -128,7 +142,7 @@ public class UploadView extends VBox {
 
             uploadTask.setOnSucceeded(event -> {
                 setFeedback(lblFeedback, "Track uploaded successfully!", true);
-                clearForm(txtTitle, txtGenre, txtBpm, txtKey, lblAudioPath, lblCoverPath);
+                clearForm(txtTitle, txtGenre, txtBpm, txtKey, txtDescription, lblAudioPath, lblCoverPath);
                 audioFile = null;
                 coverFile = null;
                 btnUpload.setDisable(false);
@@ -145,7 +159,9 @@ public class UploadView extends VBox {
         this.getChildren().addAll(
             lblTitle,
             txtTitle,
-            buildRow(txtBpm, txtKey),
+            buildRow(txtGenre, txtBpm),
+            buildRow(txtKey),
+            txtDescription,
             audioBox,
             coverBox,
             lblFeedback,
@@ -179,7 +195,7 @@ public class UploadView extends VBox {
         row.setAlignment(Pos.CENTER);
         row.setMaxWidth(400);
         for (TextField f : fields) {
-            f.setMaxWidth(192);
+            f.setMaxWidth(fields.length == 1 ? 400 : 192);
             row.getChildren().add(f);
         }
         return row;
@@ -191,12 +207,14 @@ public class UploadView extends VBox {
     }
 
     private void clearForm(TextField txtTitle, TextField txtGenre,
-                           TextField txtBpm, TextField txtKey,
-                           Label lblAudioPath, Label lblCoverPath) {
+                            TextField txtBpm, TextField txtKey,
+                            TextArea txtDescription,
+                            Label lblAudioPath, Label lblCoverPath) {
         txtTitle.clear();
         txtGenre.clear();
         txtBpm.clear();
         txtKey.clear();
+        txtDescription.clear();
         lblAudioPath.setText("No audio selected");
         lblAudioPath.setStyle("-fx-text-fill: gray; -fx-font-size: 12px;");
         lblCoverPath.setText("No cover selected (optional)");

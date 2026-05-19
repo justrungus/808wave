@@ -1,5 +1,6 @@
 package com.wave808.server.services;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -7,12 +8,11 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.UUID;
 
+import javax.imageio.ImageIO;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 
 import com.wave808.server.dto.TrackDTO;
 import com.wave808.server.models.Track;
@@ -36,6 +36,7 @@ public class TrackService {
 
     public TrackDTO uploadTrack(String title, String genre,
                                 Integer bpm, String musicalKey,
+                                String description,
                                 Long userId, MultipartFile audioFile,
                                 MultipartFile coverImage) throws IOException {
 
@@ -57,11 +58,8 @@ public class TrackService {
         if (coverImage != null && !coverImage.isEmpty()) {
             String coverFileName = UUID.randomUUID() + "_cover.png";
             Path coverPath = uploadPath.resolve(coverFileName);
-            
-            // Convertir a PNG independientemente del formato original
             BufferedImage buffered = ImageIO.read(coverImage.getInputStream());
             ImageIO.write(buffered, "PNG", coverPath.toFile());
-            
             coverFilePath = coverPath.toString();
         }
 
@@ -70,6 +68,7 @@ public class TrackService {
         track.setGenre(genre);
         track.setBpm(bpm);
         track.setMusicalKey(musicalKey);
+        track.setDescription(description);
         track.setFilePath(audioPath.toString());
         track.setCoverPath(coverFilePath);
         track.setUploader(uploader);
@@ -83,7 +82,8 @@ public class TrackService {
                 saved.getBpm(),
                 saved.getMusicalKey(),
                 saved.getUploader().getUsername(),
-                saved.getCoverPath()
+                saved.getCoverPath(),
+                saved.getDescription()
         );
     }
 
@@ -116,7 +116,8 @@ public class TrackService {
                 t.getBpm(),
                 t.getMusicalKey(),
                 t.getUploader().getUsername(),
-                t.getCoverPath()
+                t.getCoverPath(),
+                t.getDescription()
         );
     }
 }

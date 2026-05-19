@@ -1,5 +1,11 @@
 package com.wave808.server.services;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.wave808.server.dto.TrackDTO;
 import com.wave808.server.models.LikedTrack;
 import com.wave808.server.models.LikedTrackId;
 import com.wave808.server.models.Track;
@@ -7,10 +13,6 @@ import com.wave808.server.models.User;
 import com.wave808.server.repositories.LikedTrackRepository;
 import com.wave808.server.repositories.TrackRepository;
 import com.wave808.server.repositories.UserRepository;
-import com.wave808.server.dto.TrackDTO;
-import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class LikeService {
@@ -55,7 +57,8 @@ public class LikeService {
                             t.getBpm(),
                             t.getMusicalKey(),
                             t.getUploader().getUsername(),
-                            t.getCoverPath()
+                            t.getCoverPath(),
+                            t.getDescription()
                     );
                 })
                 .collect(Collectors.toList());

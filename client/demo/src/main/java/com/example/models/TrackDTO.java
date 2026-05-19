@@ -8,6 +8,7 @@ public class TrackDTO {
     private String musicalKey;
     private String uploaderUsername;
     private String coverPath;
+    private String description;
 
     public Long getId() { return id; }
     public String getTitle() { return title; }
@@ -16,4 +17,5 @@ public class TrackDTO {
     public String getMusicalKey() { return musicalKey; }
     public String getUploaderUsername() { return uploaderUsername; }
     public String getCoverPath() { return coverPath; }
+    public String getDescription() { return description; }
 }

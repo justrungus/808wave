@@ -45,19 +45,8 @@ public class WelcomeView extends VBox{
 
         this.getChildren().addAll(logo, lblTitle, buttons);
 
-        btnLogin.setOnAction(e -> showLogin());
-
-
         btnLogin.setOnAction(e -> Router.navigateTo("LOGIN"));
         btnRegister.setOnAction(e -> Router.navigateTo("REGISTER"));
         
     }
-
-    private void showLogin(){
-            System.out.println("test");
-    }
-    
-    
-
-
 }

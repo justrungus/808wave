@@ -27,10 +27,11 @@ public class TrackController {
             @RequestParam("genre") String genre,
             @RequestParam("bpm") Integer bpm,
             @RequestParam("musicalKey") String musicalKey,
+            @RequestParam(value = "description", required = false) String description,
             @RequestParam("userId") Long userId,
             @RequestParam("audio") MultipartFile audioFile,
             @RequestParam(value = "cover", required = false) MultipartFile coverImage) throws Exception {
-        return ResponseEntity.ok(trackService.uploadTrack(title, genre, bpm, musicalKey, userId, audioFile, coverImage));
+        return ResponseEntity.ok(trackService.uploadTrack(title, genre, bpm, musicalKey, description, userId, audioFile, coverImage));
     }
 
     @GetMapping("/recent")

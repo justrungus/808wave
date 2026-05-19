@@ -1,12 +1,24 @@
 package com.wave808.server.services;
 
-import com.wave808.server.dto.PlaylistDTO;
-import com.wave808.server.dto.TrackDTO;
-import com.wave808.server.models.*;
-import com.wave808.server.repositories.*;
-import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.wave808.server.dto.PlaylistDTO;
+import com.wave808.server.dto.TrackDTO;
+import com.wave808.server.models.Playlist;
+import com.wave808.server.models.PlaylistTrack;
+import com.wave808.server.models.PlaylistTrackId;
+import com.wave808.server.models.SavedPlaylist;
+import com.wave808.server.models.SavedPlaylistId;
+import com.wave808.server.models.Track;
+import com.wave808.server.models.User;
+import com.wave808.server.repositories.PlaylistRepository;
+import com.wave808.server.repositories.PlaylistTrackRepository;
+import com.wave808.server.repositories.SavedPlaylistRepository;
+import com.wave808.server.repositories.TrackRepository;
+import com.wave808.server.repositories.UserRepository;
 
 @Service
 public class PlaylistService {
@@ -62,7 +74,7 @@ public class PlaylistService {
                 .map(pt -> {
                     Track t = pt.getTrack();
                     return new TrackDTO(t.getTrackId(), t.getTitle(), t.getGenre(),
-                            t.getBpm(), t.getMusicalKey(), t.getUploader().getUsername(), t.getCoverPath());
+                            t.getBpm(), t.getMusicalKey(), t.getUploader().getUsername(), t.getCoverPath(), t.getDescription());
                 })
                 .collect(Collectors.toList());
     }

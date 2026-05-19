@@ -22,7 +22,7 @@ public class TrackService {
     private final Gson gson = new Gson();
     private final String BASE_URL = "http://localhost:8080/api/tracks";
 
-    public List<TrackDTO> getRecentTracks() throws Exception{
+    public List<TrackDTO> getRecentTracks() throws Exception {
         return getList(BASE_URL + "/recent");
     }
 
@@ -30,15 +30,15 @@ public class TrackService {
         return getList(BASE_URL + "/top");
     }
 
-    public List<TrackDTO> getTracksByUser(Long userId) throws Exception{
+    public List<TrackDTO> getTracksByUser(Long userId) throws Exception {
         return getList(BASE_URL + "/user/" + userId);
     }
 
-    public List<TrackDTO> getLikedTracks(Long userId) throws Exception{
+    public List<TrackDTO> getLikedTracks(Long userId) throws Exception {
         return getList(BASE_URL + "/liked/" + userId);
     }
 
-    private List<TrackDTO> getList(String url) throws Exception{
+    private List<TrackDTO> getList(String url) throws Exception {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(url))
                 .GET()
@@ -53,29 +53,28 @@ public class TrackService {
     }
 
     public TrackDTO upload(String title, String genre,
-                            Integer bpm, String musicalKey,
-                            Long userId, File audioFile, File coverImage) throws Exception {
+                           Integer bpm, String musicalKey,
+                           String description,
+                           Long userId, File audioFile, File coverImage) throws Exception {
 
         String boundary = UUID.randomUUID().toString();
-
         byte[] audioBytes = Files.readAllBytes(audioFile.toPath());
 
         StringBuilder textParts = new StringBuilder();
         textParts.append(textPart(boundary, "title", title));
-        textParts.append(textPart(boundary, "genre", genre == null ? "" : genre));   
+        textParts.append(textPart(boundary, "genre", genre == null ? "" : genre));
         textParts.append(textPart(boundary, "bpm", bpm == null ? "" : bpm.toString()));
         textParts.append(textPart(boundary, "musicalKey", musicalKey == null ? "" : musicalKey));
+        textParts.append(textPart(boundary, "description", description == null ? "" : description));
         textParts.append(textPart(boundary, "userId", userId.toString()));
 
         byte[] textBytes = textParts.toString().getBytes();
 
-        //  audio
         String audioHeader = "--" + boundary + "\r\n" +
                 "Content-Disposition: form-data; name=\"audio\"; filename=\"" + audioFile.getName() + "\"\r\n" +
                 "Content-Type: audio/mpeg\r\n\r\n";
         byte[] audioHeaderBytes = audioHeader.getBytes();
 
-        //  imagen 
         byte[] coverBytes = new byte[0];
         byte[] coverHeaderBytes = new byte[0];
         if (coverImage != null) {
@@ -88,7 +87,6 @@ public class TrackService {
 
         byte[] ending = ("\r\n--" + boundary + "--\r\n").getBytes();
 
-        // Montar el cuerpo completo
         int totalSize = textBytes.length + audioHeaderBytes.length + audioBytes.length
                 + coverHeaderBytes.length + coverBytes.length + ending.length;
         byte[] fullBody = new byte[totalSize];
