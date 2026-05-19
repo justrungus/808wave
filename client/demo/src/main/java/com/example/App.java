@@ -60,7 +60,7 @@ public class App extends Application {
             String css = getClass().getResource("/com/example/style.css").toExternalForm();
             scene.getStylesheets().add(css);
         } catch (NullPointerException e) {
-            System.err.println("Aviso: No se encontró style.css, continuando sin él.");
+            System.err.println("Aviso: No se encontro style.css");
         }
 
         return scene;

@@ -1,23 +1,21 @@
 package com.example.components;
 
-import java.util.List;
-
 import com.example.core.Session;
 import com.example.models.TrackDTO;
 import com.example.services.TrackService;
-
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
+import java.util.List;
 
-public class HomeView extends VBox{
+public class HomeView extends VBox {
 
     private final TrackService trackService = new TrackService();
 
-    public HomeView(){
+    public HomeView() {
         this.setSpacing(10);
         this.setPadding(new Insets(30));
         this.setAlignment(Pos.TOP_LEFT);
@@ -29,10 +27,10 @@ public class HomeView extends VBox{
         loadContent();
     }
 
-    private void loadContent(){
-        Task<HomeData> task = new Task<>(){
+    private void loadContent() {
+        Task<HomeData> task = new Task<>() {
             @Override
-            protected HomeData call() throws Exception{
+            protected HomeData call() throws Exception {
                 List<TrackDTO> recent = trackService.getRecentTracks();
                 List<TrackDTO> top = trackService.getTopTracks();
                 List<TrackDTO> mine = trackService.getTracksByUser(Session.getInstance().getUserId());
@@ -43,16 +41,16 @@ public class HomeView extends VBox{
         task.setOnSucceeded(e -> {
             HomeData data = task.getValue();
             this.getChildren().clear();
-            
+
             VBox content = new VBox(25);
             content.setPadding(new Insets(0));
 
             content.getChildren().addAll(
-                new TrackSection("Recently Added", data.recent),
-                new TrackSection("Most Played", data.top),
-                new TrackSection("Your Tracks", data.mine)
+                new TrackSection("Recently Added", data.recent, null),
+                new TrackSection("Most Played", data.top, null),
+                new TrackSection("Your Tracks", data.mine, null)
             );
-            
+
             ScrollPane scroll = new ScrollPane(content);
             scroll.setFitToWidth(true);
             scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -72,6 +70,7 @@ public class HomeView extends VBox{
 
         new Thread(task).start();
     }
+
     private static class HomeData {
         List<TrackDTO> recent, top, mine;
         HomeData(List<TrackDTO> recent, List<TrackDTO> top, List<TrackDTO> mine) {

@@ -1,26 +1,27 @@
 package com.example.components;
 
-import java.util.List;
-
 import com.example.core.Session;
 import com.example.models.PlaylistDTO;
 import com.example.models.TrackDTO;
 import com.example.services.PlaylistService;
 import com.example.services.TrackService;
-
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import java.util.List;
 
-public class LibraryView extends VBox{
-    
+public class LibraryView extends VBox {
+
     private final TrackService trackService = new TrackService();
     private final PlaylistService playlistService = new PlaylistService();
+    private final StackPane contentArea;
 
-    public LibraryView(){
+    public LibraryView(StackPane contentArea) {
+        this.contentArea = contentArea;
         this.setSpacing(10);
         this.setPadding(new Insets(30));
         this.setAlignment(Pos.TOP_LEFT);
@@ -32,10 +33,10 @@ public class LibraryView extends VBox{
         loadContent();
     }
 
-    private void loadContent(){
+    private void loadContent() {
         Long userId = Session.getInstance().getUserId();
 
-        Task<LibraryData> task = new Task<>(){
+        Task<LibraryData> task = new Task<>() {
             @Override
             protected LibraryData call() throws Exception {
                 List<TrackDTO> mine = trackService.getTracksByUser(userId);
@@ -48,12 +49,37 @@ public class LibraryView extends VBox{
         task.setOnSucceeded(e -> {
             LibraryData data = task.getValue();
             this.getChildren().clear();
+
             VBox content = new VBox(25);
 
             content.getChildren().addAll(
-                new TrackSection("My Tracks", data.mine),
-                new TrackSection("Liked Tracks", data.liked),
-                new PlaylistSection("My Playlists", data.playlists)
+                new TrackSection("My Tracks", data.mine, () -> {
+                    contentArea.getChildren().clear();
+                    contentArea.getChildren().add(
+                        new SeeAllView("My Tracks", data.mine, () -> {
+                            contentArea.getChildren().clear();
+                            contentArea.getChildren().add(new LibraryView(contentArea));
+                        })
+                    );
+                }),
+                new TrackSection("Liked Tracks", data.liked, () -> {
+                    contentArea.getChildren().clear();
+                    contentArea.getChildren().add(
+                        new SeeAllView("Liked Tracks", data.liked, () -> {
+                            contentArea.getChildren().clear();
+                            contentArea.getChildren().add(new LibraryView(contentArea));
+                        })
+                    );
+                }),
+                new PlaylistSection("My Playlists", data.playlists, () -> {
+                    contentArea.getChildren().clear();
+                    contentArea.getChildren().add(
+                        SeeAllView.forPlaylists("My Playlists", data.playlists, () -> {
+                            contentArea.getChildren().clear();
+                            contentArea.getChildren().add(new LibraryView(contentArea));
+                        })
+                    );
+                })
             );
 
             ScrollPane scroll = new ScrollPane(content);
@@ -62,6 +88,15 @@ public class LibraryView extends VBox{
             scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
 
             this.getChildren().add(scroll);
+        });
+
+        task.setOnFailed(e -> {
+            System.out.println("Library error: " + task.getException().getMessage());
+            task.getException().printStackTrace();
+            this.getChildren().clear();
+            Label err = new Label("Could not load library.");
+            err.setStyle("-fx-text-fill: #e74c3c; -fx-font-size: 13px;");
+            this.getChildren().add(err);
         });
 
         new Thread(task).start();
@@ -74,5 +109,4 @@ public class LibraryView extends VBox{
             this.mine = mine; this.liked = liked; this.playlists = playlists;
         }
     }
-
 }

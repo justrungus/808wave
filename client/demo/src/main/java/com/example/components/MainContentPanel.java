@@ -117,7 +117,7 @@ public class MainContentPanel extends VBox{
 
         btnLibrary.setOnAction(e -> {
             contentArea.getChildren().clear();
-            contentArea.getChildren().add(new LibraryView());
+            contentArea.getChildren().add(new LibraryView(contentArea));
         });
 
         //logica boton upload
@@ -192,5 +192,9 @@ public class MainContentPanel extends VBox{
         if (currentUserName != null) {
         this.profileName.setText(currentUserName);
     }
+    }
+    
+    public StackPane getContentArea() {
+    return contentArea;
     }
 }

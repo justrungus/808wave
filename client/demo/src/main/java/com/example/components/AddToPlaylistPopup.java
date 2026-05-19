@@ -1,5 +1,7 @@
 package com.example.components;
 
+import java.util.List;
+
 import com.example.core.Session;
 import com.example.models.PlaylistDTO;
 import com.example.models.TrackDTO;
@@ -14,11 +16,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
-import java.util.List;
 
 public class AddToPlaylistPopup {
 
@@ -32,39 +33,50 @@ public class AddToPlaylistPopup {
     public void show() {
         Stage popup = new Stage();
         popup.initModality(Modality.APPLICATION_MODAL);
-        popup.initStyle(StageStyle.UNDECORATED);
-        popup.setTitle("Add to Playlist");
+        popup.initStyle(StageStyle.TRANSPARENT);
 
         VBox root = new VBox(12);
         root.setPadding(new Insets(20));
         root.setStyle(
-            "-fx-background-color: #1e1e1e;" +
-            "-fx-background-radius: 12;" +
-            "-fx-border-color: #B39DDB;" +
-            "-fx-border-radius: 12;" +
-            "-fx-border-width: 1;"
+                "-fx-background-color: #1e1e1e;"
+                + "-fx-background-radius: 12;"
+                + "-fx-border-color: #B39DDB;"
+                + "-fx-border-radius: 12;"
+                + "-fx-border-width: 1;"
         );
+
+        //arrastable
+        final double[] offset = {0, 0};
+        root.setOnMousePressed(e -> {
+            offset[0] = e.getSceneX();
+            offset[1] = e.getSceneY();
+        });
+        root.setOnMouseDragged(e -> {
+            popup.setX(e.getScreenX() - offset[0]);
+            popup.setY(e.getScreenY() - offset[1]);
+        });
 
         Label lblTitle = new Label("Add \"" + track.getTitle() + "\" to playlist");
         lblTitle.setStyle("-fx-text-fill: #B39DDB; -fx-font-size: 14px; -fx-font-weight: bold;");
 
-        
         HBox createBox = new HBox(8);
         createBox.setAlignment(Pos.CENTER_LEFT);
         TextField txtName = new TextField();
         txtName.setPromptText("New playlist name...");
         txtName.setStyle(
-            "-fx-background-color: rgba(255,255,255,0.1);" +
-            "-fx-text-fill: #B39DDB;" +
-            "-fx-prompt-text-fill: gray;" +
-            "-fx-background-radius: 8;"
+                "-fx-background-color: rgba(255,255,255,0.1);"
+                + "-fx-text-fill: #B39DDB;"
+                + "-fx-prompt-text-fill: gray;"
+                + "-fx-background-radius: 8;"
         );
         Button btnCreate = new Button("Create & Add");
         btnCreate.setStyle("-fx-background-color: #B39DDB; -fx-text-fill: #1e1e1e; -fx-background-radius: 8;");
 
         btnCreate.setOnAction(e -> {
             String name = txtName.getText().trim();
-            if (name.isEmpty()) return;
+            if (name.isEmpty()) {
+                return;
+            }
             btnCreate.setDisable(true);
             Task<Void> task = new Task<>() {
                 @Override
@@ -84,13 +96,11 @@ public class AddToPlaylistPopup {
 
         createBox.getChildren().addAll(txtName, btnCreate);
 
-        
         Label lblOr = new Label("— or add to existing —");
         lblOr.setStyle("-fx-text-fill: gray; -fx-font-size: 11px;");
         lblOr.setMaxWidth(Double.MAX_VALUE);
         lblOr.setAlignment(Pos.CENTER);
 
-        
         VBox playlistList = new VBox(6);
         Label lblLoading = new Label("Loading playlists...");
         lblLoading.setStyle("-fx-text-fill: gray; -fx-font-size: 12px;");
@@ -115,22 +125,22 @@ public class AddToPlaylistPopup {
                     Button btnAdd = new Button("+ " + pl.getName());
                     btnAdd.setMaxWidth(Double.MAX_VALUE);
                     btnAdd.setStyle(
-                        "-fx-background-color: rgba(255,255,255,0.05);" +
-                        "-fx-text-fill: #eeeeee;" +
-                        "-fx-background-radius: 8;" +
-                        "-fx-cursor: hand;"
+                            "-fx-background-color: rgba(255,255,255,0.05);"
+                            + "-fx-text-fill: #eeeeee;"
+                            + "-fx-background-radius: 8;"
+                            + "-fx-cursor: hand;"
                     );
                     btnAdd.setOnMouseEntered(e -> btnAdd.setStyle(
-                        "-fx-background-color: rgba(179,157,219,0.2);" +
-                        "-fx-text-fill: #B39DDB;" +
-                        "-fx-background-radius: 8;" +
-                        "-fx-cursor: hand;"
+                            "-fx-background-color: rgba(179,157,219,0.2);"
+                            + "-fx-text-fill: #B39DDB;"
+                            + "-fx-background-radius: 8;"
+                            + "-fx-cursor: hand;"
                     ));
                     btnAdd.setOnMouseExited(e -> btnAdd.setStyle(
-                        "-fx-background-color: rgba(255,255,255,0.05);" +
-                        "-fx-text-fill: #eeeeee;" +
-                        "-fx-background-radius: 8;" +
-                        "-fx-cursor: hand;"
+                            "-fx-background-color: rgba(255,255,255,0.05);"
+                            + "-fx-text-fill: #eeeeee;"
+                            + "-fx-background-radius: 8;"
+                            + "-fx-cursor: hand;"
                     ));
                     btnAdd.setOnAction(e -> {
                         btnAdd.setDisable(true);
@@ -152,7 +162,6 @@ public class AddToPlaylistPopup {
 
         new Thread(loadTask).start();
 
-        
         Button btnCancel = new Button("Cancel");
         btnCancel.setMaxWidth(Double.MAX_VALUE);
         btnCancel.setStyle("-fx-background-color: transparent; -fx-text-fill: gray; -fx-background-radius: 8;");
@@ -161,6 +170,7 @@ public class AddToPlaylistPopup {
         root.getChildren().addAll(lblTitle, createBox, lblOr, playlistList, btnCancel);
 
         Scene scene = new Scene(root, 320, 400);
+        scene.setFill(Color.TRANSPARENT);
         scene.setFill(null);
         popup.setScene(scene);
         popup.showAndWait();

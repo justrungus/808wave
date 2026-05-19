@@ -3,20 +3,22 @@ package com.example.components;
 import com.example.models.PlaylistDTO;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.layout.StackPane;
 import java.util.List;
 
 public class PlaylistSection extends VBox {
 
-    public PlaylistSection(String title, List<PlaylistDTO> playlists) {
+    public PlaylistSection(String title, List<PlaylistDTO> playlists, Runnable onSeeAll) {
         this.setSpacing(12);
         this.setPadding(new Insets(0, 0, 20, 0));
+
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
 
         Label lblTitle = new Label(title);
         lblTitle.setStyle(
@@ -24,6 +26,30 @@ public class PlaylistSection extends VBox {
             "-fx-font-weight: bold;" +
             "-fx-text-fill: #B39DDB;"
         );
+        HBox.setHgrow(lblTitle, Priority.ALWAYS);
+
+        Button btnSeeAll = new Button("See all →");
+        btnSeeAll.setStyle(
+            "-fx-background-color: transparent;" +
+            "-fx-text-fill: gray;" +
+            "-fx-font-size: 12px;" +
+            "-fx-cursor: hand;"
+        );
+        btnSeeAll.setOnMouseEntered(e -> btnSeeAll.setStyle(
+            "-fx-background-color: transparent;" +
+            "-fx-text-fill: #B39DDB;" +
+            "-fx-font-size: 12px;" +
+            "-fx-cursor: hand;"
+        ));
+        btnSeeAll.setOnMouseExited(e -> btnSeeAll.setStyle(
+            "-fx-background-color: transparent;" +
+            "-fx-text-fill: gray;" +
+            "-fx-font-size: 12px;" +
+            "-fx-cursor: hand;"
+        ));
+        btnSeeAll.setOnAction(e -> onSeeAll.run());
+
+        header.getChildren().addAll(lblTitle, btnSeeAll);
 
         HBox cardsRow = new HBox(12);
         cardsRow.setPadding(new Insets(5, 0, 5, 0));
@@ -34,7 +60,7 @@ public class PlaylistSection extends VBox {
             cardsRow.getChildren().add(empty);
         } else {
             for (PlaylistDTO pl : playlists) {
-                cardsRow.getChildren().add(buildPlaylistCard(pl));
+                cardsRow.getChildren().add(new PlaylistCard(pl));
             }
         }
 
@@ -44,54 +70,6 @@ public class PlaylistSection extends VBox {
         scroll.setFitToHeight(true);
         scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
 
-        this.getChildren().addAll(lblTitle, scroll);
-    }
-
-    private VBox buildPlaylistCard(PlaylistDTO pl) {
-        VBox card = new VBox(6);
-        card.setAlignment(Pos.TOP_LEFT);
-        card.setPrefWidth(150);
-        card.setStyle(
-            "-fx-background-color: rgba(255,255,255,0.05);" +
-            "-fx-background-radius: 12;" +
-            "-fx-padding: 10;" +
-            "-fx-cursor: hand;"
-        );
-
-        StackPane cover = new StackPane();
-        cover.setPrefSize(130, 130);
-        Rectangle bg = new Rectangle(130, 130);
-        bg.setArcWidth(10);
-        bg.setArcHeight(10);
-        bg.setFill(Color.web("#2a2a2a"));
-        Label icon = new Label("☰");
-        icon.setStyle("-fx-font-size: 40px; -fx-text-fill: #B39DDB;");
-        cover.getChildren().addAll(bg, icon);
-
-        Label lblName = new Label(pl.getName());
-        lblName.setStyle(
-            "-fx-font-size: 13px;" +
-            "-fx-font-weight: bold;" +
-            "-fx-text-fill: #eeeeee;"
-        );
-
-        Label lblCreator = new Label("by " + pl.getCreatorUsername());
-        lblCreator.setStyle("-fx-font-size: 11px; -fx-text-fill: #B39DDB;");
-
-        card.setOnMouseEntered(e -> card.setStyle(
-            "-fx-background-color: rgba(179,157,219,0.15);" +
-            "-fx-background-radius: 12;" +
-            "-fx-padding: 10;" +
-            "-fx-cursor: hand;"
-        ));
-        card.setOnMouseExited(e -> card.setStyle(
-            "-fx-background-color: rgba(255,255,255,0.05);" +
-            "-fx-background-radius: 12;" +
-            "-fx-padding: 10;" +
-            "-fx-cursor: hand;"
-        ));
-
-        card.getChildren().addAll(cover, lblName, lblCreator);
-        return card;
+        this.getChildren().addAll(header, scroll);
     }
 }

@@ -1,18 +1,26 @@
 package com.example.components;
 
+import java.util.List;
+
 import com.example.models.TrackDTO;
+
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import java.util.List;
 
 public class TrackSection extends VBox {
 
-    public TrackSection(String title, List<TrackDTO> tracks) {
+    public TrackSection(String title, List<TrackDTO> tracks, Runnable onSeeAll) {
         this.setSpacing(12);
         this.setPadding(new Insets(0, 0, 20, 0));
+
+        HBox header = new HBox();
+        header.setAlignment(Pos.CENTER_LEFT);
 
         Label lblTitle = new Label(title);
         lblTitle.setStyle(
@@ -20,6 +28,33 @@ public class TrackSection extends VBox {
             "-fx-font-weight: bold;" +
             "-fx-text-fill: #B39DDB;"
         );
+        HBox.setHgrow(lblTitle, Priority.ALWAYS);
+
+        if (onSeeAll != null) {
+            Button btnSeeAll = new Button("See all →");
+            btnSeeAll.setStyle(
+                "-fx-background-color: transparent;" +
+                "-fx-text-fill: gray;" +
+                "-fx-font-size: 12px;" +
+                "-fx-cursor: hand;"
+            );
+            btnSeeAll.setOnMouseEntered(e -> btnSeeAll.setStyle(
+                "-fx-background-color: transparent;" +
+                "-fx-text-fill: #B39DDB;" +
+                "-fx-font-size: 12px;" +
+                "-fx-cursor: hand;"
+            ));
+            btnSeeAll.setOnMouseExited(e -> btnSeeAll.setStyle(
+                "-fx-background-color: transparent;" +
+                "-fx-text-fill: gray;" +
+                "-fx-font-size: 12px;" +
+                "-fx-cursor: hand;"
+            ));
+            btnSeeAll.setOnAction(e -> onSeeAll.run());
+            header.getChildren().addAll(lblTitle, btnSeeAll);
+        } else {
+            header.getChildren().add(lblTitle);
+        }
 
         HBox cardsRow = new HBox(12);
         cardsRow.setPadding(new Insets(5, 0, 5, 0));
@@ -40,6 +75,6 @@ public class TrackSection extends VBox {
         scroll.setFitToHeight(true);
         scroll.setStyle("-fx-background: transparent; -fx-background-color: transparent;");
 
-        this.getChildren().addAll(lblTitle, scroll);
+        this.getChildren().addAll(header, scroll);
     }
 }
