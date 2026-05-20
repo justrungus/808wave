@@ -20,7 +20,7 @@ public class TrackCard extends VBox {
 
     private final TrackService trackService = new TrackService();
 
-    public TrackCard(TrackDTO track, boolean initialLiked) {
+    public TrackCard(TrackDTO track, boolean initialLiked, StackPane contentArea, Runnable onBack) {
         this.setSpacing(6);
         this.setAlignment(Pos.TOP_LEFT);
         this.setPrefWidth(150);
@@ -177,6 +177,14 @@ public class TrackCard extends VBox {
         btnAddPlaylist.setOnAction(e -> {
             e.consume();
             new AddToPlaylistPopup(track).show();
+        });
+
+        this.setOnMouseClicked(e -> {
+            if (e.getTarget() == btnLike || e.getTarget() == btnAddPlaylist) return;
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(
+                new TrackDetailView(track, initialLiked, onBack, contentArea)
+            );
         });
 
         this.getChildren().addAll(coverPane, lblTitle, lblArtist);

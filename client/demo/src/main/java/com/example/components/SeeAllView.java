@@ -34,7 +34,7 @@ public class SeeAllView extends VBox {
         } else {
             for (TrackDTO track : tracks) {
                 boolean liked = likedIds != null && likedIds.contains(track.getId());
-                grid.getChildren().add(new TrackCard(track, liked));
+                grid.getChildren().add(new TrackCard(track, liked, null, null));
             }
         }
 

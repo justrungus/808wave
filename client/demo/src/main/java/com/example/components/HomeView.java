@@ -1,23 +1,28 @@
 package com.example.components;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.example.core.Session;
 import com.example.models.TrackDTO;
 import com.example.services.TrackService;
+
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class HomeView extends VBox {
 
     private final TrackService trackService = new TrackService();
+    private final StackPane contentArea;
 
-    public HomeView() {
+    public HomeView(StackPane contentArea) {
+        this.contentArea = contentArea;
         this.setSpacing(10);
         this.setPadding(new Insets(30));
         this.setAlignment(Pos.TOP_LEFT);
@@ -53,10 +58,15 @@ public class HomeView extends VBox {
             VBox content = new VBox(25);
             content.setPadding(new Insets(0));
 
+            Runnable goHome = () -> {
+                contentArea.getChildren().clear();
+                contentArea.getChildren().add(new HomeView(contentArea));
+            };
+
             content.getChildren().addAll(
-                new TrackSection("Recently Added", data.recent, data.likedIds, null),
-                new TrackSection("Most Played", data.top, data.likedIds, null),
-                new TrackSection("Your Tracks", data.mine, data.likedIds, null)
+                new TrackSection("Recently Added", data.recent, data.likedIds, contentArea, goHome, null),
+                new TrackSection("Most Played", data.top, data.likedIds, contentArea, goHome, null),
+                new TrackSection("Your Tracks", data.mine, data.likedIds, contentArea, goHome, null)
             );
 
             ScrollPane scroll = new ScrollPane(content);

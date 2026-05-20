@@ -33,13 +33,10 @@ public class MainContentPanel extends VBox{
     private UploadView uploadView;
 
     public MainContentPanel(){
-        //estilo css custom del panel
         this.getStyleClass().add("glass-panel");
 
-        //vistas
         uploadView = new UploadView();
 
-        //barra superior para arrastrar
         HBox topBar = new HBox(7);
         topBar.setAlignment(Pos.CENTER);
         topBar.setStyle("-fx-cursor: hand; -fx-background-color: rgba(255, 0, 0, 0);");
@@ -53,25 +50,20 @@ public class MainContentPanel extends VBox{
             rightPill()
         );
 
-        //main content area
         contentArea = new StackPane();
         VBox.setVgrow(contentArea, Priority.ALWAYS);
 
         this.getChildren().add(contentArea);
-        contentArea.getChildren().add(new HomeView());
+        contentArea.getChildren().add(new HomeView(contentArea));
     }
 
-    
-    //metodo para poder usar iconos
     private SVGPath makeIcon(String svgPathData) {
         SVGPath icon = new SVGPath();
         icon.setContent(svgPathData);
-        
         icon.setFill(Color.web("#4a4a4a")); 
         return icon;
     }
 
-    //metodo para hacer draggeable la aplicacion
     private void makeDraggable(Node node){
         node.setOnMousePressed(event -> {
             xOffset = event.getSceneX();
@@ -84,7 +76,6 @@ public class MainContentPanel extends VBox{
             stage.setY(event.getScreenY() - yOffset);
         });
     }
-
 
     private HBox leftPill(){
         HBox leftPill = new HBox(5);
@@ -109,10 +100,9 @@ public class MainContentPanel extends VBox{
 
         leftPill.getChildren().addAll(btnHome, btnLibrary, btnUpload);
 
-
         btnHome.setOnAction(e -> {
             contentArea.getChildren().clear();
-            contentArea.getChildren().add(new HomeView());
+            contentArea.getChildren().add(new HomeView(contentArea));
         });
 
         btnLibrary.setOnAction(e -> {
@@ -120,7 +110,6 @@ public class MainContentPanel extends VBox{
             contentArea.getChildren().add(new LibraryView(contentArea));
         });
 
-        //logica boton upload
         btnUpload.setOnAction(e -> {
             contentArea.getChildren().clear();
             contentArea.getChildren().add(uploadView);
@@ -132,7 +121,6 @@ public class MainContentPanel extends VBox{
     private TextField searchFieldPill(){
         TextField searchField = new TextField("Search bar");
         searchField.getStyleClass().add(Styles.ROUNDED);
-
         searchField.getStyleClass().add("search-pill");
         HBox.setHgrow(searchField, Priority.ALWAYS);
         return searchField;
@@ -143,45 +131,27 @@ public class MainContentPanel extends VBox{
         rightPill.setAlignment(Pos.CENTER);
         rightPill.getStyleClass().add("pill-box");
         
-        //avatar
         Circle avatar = new Circle(12);
         avatar.setFill(Color.LIGHTGREY);
-        
-        // avatar.setFill(new ImagePattern(new Image("file:ruta/a/tu/imagen.jpg")));
-        // O si está en resources: new Image(getClass().getResource("/tu_imagen.png").toExternalForm())
 
         profileName = new Label("Guest");
-        
 
-        //botones
         Button btnNotifications = new Button();
         Button btnMaximize = new Button("🗖");
         Button btnClose = new Button();
 
-        String pathNoti ="M5.5 18.77q-.213 0-.356-.145T5 18.268t.144-.356t.356-.143h1.116V9.846q0-1.96 1.24-3.447T11 4.546V4q0-.417.291-.708q.291-.292.707-.292t.709.292T13 4v.546q1.904.365 3.144 1.853t1.24 3.447v7.923H18.5q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm6.497 2.615q-.668 0-1.14-.475t-.472-1.14h3.23q0 .67-.475 1.142q-.476.472-1.143.472";
+        String pathNoti = "M5.5 18.77q-.213 0-.356-.145T5 18.268t.144-.356t.356-.143h1.116V9.846q0-1.96 1.24-3.447T11 4.546V4q0-.417.291-.708q.291-.292.707-.292t.709.292T13 4v.546q1.904.365 3.144 1.853t1.24 3.447v7.923H18.5q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm6.497 2.615q-.668 0-1.14-.475t-.472-1.14h3.23q0 .67-.475 1.142q-.476.472-1.143.472";
         btnNotifications.setGraphic(makeIcon(pathNoti));
 
         String pathClose = "m12 12.708l-5.246 5.246q-.14.14-.344.15t-.364-.15t-.16-.354t.16-.354L11.292 12L6.046 6.754q-.14-.14-.15-.344t.15-.364t.354-.16t.354.16L12 11.292l5.246-5.246q.14-.14.345-.15q.203-.01.363.15t.16.354t-.16.354L12.708 12l5.246 5.246q.14.14.15.345q.01.203-.15.363t-.354.16t-.354-.16z";
         btnClose.setGraphic(makeIcon(pathClose));
-        //TO DO WHEN NOTIFICATION
-        //M11.997 21.385q-.668 0-1.14-.475q-.472-.474-.472-1.14h3.23q0 .67-.475 1.143q-.476.472-1.143.472M5.5 18.769q-.213 0-.356-.144T5 18.268t.144-.356t.356-.143h1.116V9.846q0-1.96 1.24-3.447T11 4.546V4q0-.417.291-.708q.291-.292.707-.292t.709.292T13 4v.075q-.442.616-.683 1.342q-.24.727-.24 1.487q0 1.998 1.395 3.422t3.374 1.463h.27q.134 0 .268-.02v6H18.5q.213 0 .356.144q.144.144.144.357t-.144.356t-.356.143zm9.692-10.094q-.73-.728-.73-1.769t.728-1.772t1.77-.73t1.77.728t.732 1.77t-.729 1.771t-1.77.73t-1.77-.728
 
         btnNotifications.getStyleClass().add("pill-button");
         btnMaximize.getStyleClass().add("pill-button");
         btnClose.getStyleClass().add("pill-button");
 
-        //logica botones
-        // btnMaximize.setOnAction(event -> {
-        //     Stage stage = (Stage) rightPill.getScene().getWindow();
-        //     // Alterna entre maximizado y tamaño normal
-        //     stage.setMaximized(!stage.isMaximized()); 
-        // });
+        btnClose.setOnAction(event -> Platform.exit());
 
-        // Cerrar aplicación
-        btnClose.setOnAction(event -> {
-            // Cierra la aplicacion
-            Platform.exit(); 
-        });
         rightPill.getChildren().addAll(avatar, profileName, btnNotifications, btnMaximize, btnClose);
 
         return rightPill;
@@ -190,11 +160,11 @@ public class MainContentPanel extends VBox{
     public void refreshUserData(){
         String currentUserName = Session.getInstance().getUsername();
         if (currentUserName != null) {
-        this.profileName.setText(currentUserName);
-    }
+            this.profileName.setText(currentUserName);
+        }
     }
     
     public StackPane getContentArea() {
-    return contentArea;
+        return contentArea;
     }
 }

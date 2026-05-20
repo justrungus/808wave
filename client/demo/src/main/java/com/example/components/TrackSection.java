@@ -12,11 +12,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class TrackSection extends VBox {
 
-    public TrackSection(String title, List<TrackDTO> tracks, Set<Long> likedIds, Runnable onSeeAll) {
+    public TrackSection(String title, List<TrackDTO> tracks, Set<Long> likedIds,
+                        StackPane contentArea, Runnable onBack, Runnable onSeeAll) {
         this.setSpacing(12);
         this.setPadding(new Insets(0, 0, 20, 0));
 
@@ -67,7 +69,7 @@ public class TrackSection extends VBox {
         } else {
             for (TrackDTO track : tracks) {
                 boolean liked = likedIds != null && likedIds.contains(track.getId());
-                cardsRow.getChildren().add(new TrackCard(track, liked));
+                cardsRow.getChildren().add(new TrackCard(track, liked, contentArea, onBack));
             }
         }
 

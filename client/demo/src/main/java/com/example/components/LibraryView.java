@@ -55,34 +55,30 @@ public class LibraryView extends VBox {
             LibraryData data = task.getValue();
             this.getChildren().clear();
 
+            Runnable goLibrary = () -> {
+                contentArea.getChildren().clear();
+                contentArea.getChildren().add(new LibraryView(contentArea));
+            };
+
             VBox content = new VBox(25);
 
             content.getChildren().addAll(
-                new TrackSection("My Tracks", data.mine, data.likedIds, () -> {
+                new TrackSection("My Tracks", data.mine, data.likedIds, contentArea, goLibrary, () -> {
                     contentArea.getChildren().clear();
                     contentArea.getChildren().add(
-                        new SeeAllView("My Tracks", data.mine, data.likedIds, () -> {
-                            contentArea.getChildren().clear();
-                            contentArea.getChildren().add(new LibraryView(contentArea));
-                        })
+                        new SeeAllView("My Tracks", data.mine, data.likedIds, contentArea, goLibrary, goLibrary)
                     );
                 }),
-                new TrackSection("Liked Tracks", data.liked, data.likedIds, () -> {
+                new TrackSection("Liked Tracks", data.liked, data.likedIds, contentArea, goLibrary, () -> {
                     contentArea.getChildren().clear();
                     contentArea.getChildren().add(
-                        new SeeAllView("Liked Tracks", data.liked, data.likedIds, () -> {
-                            contentArea.getChildren().clear();
-                            contentArea.getChildren().add(new LibraryView(contentArea));
-                        })
+                        new SeeAllView("Liked Tracks", data.liked, data.likedIds, contentArea, goLibrary, goLibrary)
                     );
                 }),
                 new PlaylistSection("My Playlists", data.playlists, () -> {
                     contentArea.getChildren().clear();
                     contentArea.getChildren().add(
-                        SeeAllView.forPlaylists("My Playlists", data.playlists, () -> {
-                            contentArea.getChildren().clear();
-                            contentArea.getChildren().add(new LibraryView(contentArea));
-                        })
+                        SeeAllView.forPlaylists("My Playlists", data.playlists, goLibrary)
                     );
                 })
             );
