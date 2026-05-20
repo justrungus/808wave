@@ -35,4 +35,7 @@ public class Playlist {
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "cover_path")
+    private String coverPath;
 }

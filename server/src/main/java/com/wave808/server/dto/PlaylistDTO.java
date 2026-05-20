@@ -9,4 +9,6 @@ public class PlaylistDTO {
     private Long id;
     private String name;
     private String creatorUsername;
+    private Long creatorId;
+    private String coverPath;
 }

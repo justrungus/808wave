@@ -1,7 +1,15 @@
 package com.wave808.server.services;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.stereotype.Service;
 
@@ -20,6 +28,11 @@ import com.wave808.server.repositories.SavedPlaylistRepository;
 import com.wave808.server.repositories.TrackRepository;
 import com.wave808.server.repositories.UserRepository;
 
+import org.springframework.beans.factory.annotation.Value;
+
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
 @Service
 public class PlaylistService {
 
@@ -28,6 +41,9 @@ public class PlaylistService {
     private final SavedPlaylistRepository savedPlaylistRepository;
     private final UserRepository userRepository;
     private final TrackRepository trackRepository;
+
+    @Value("${playlist.cover-dir:storage/playlist-covers}")
+    private String coverDir;
 
     public PlaylistService(PlaylistRepository playlistRepository,
                             PlaylistTrackRepository playlistTrackRepository,
@@ -48,7 +64,7 @@ public class PlaylistService {
         playlist.setName(name);
         playlist.setCreator(creator);
         Playlist saved = playlistRepository.save(playlist);
-        return new PlaylistDTO(saved.getId(), saved.getName(), saved.getCreator().getUsername());
+        return toDTO(saved);
     }
 
     public void addTrackToPlaylist(Long playlistId, Long trackId) {
@@ -82,17 +98,14 @@ public class PlaylistService {
     public List<PlaylistDTO> getMyPlaylists(Long userId) {
         return playlistRepository.findByCreatorUserId(userId)
                 .stream()
-                .map(p -> new PlaylistDTO(p.getId(), p.getName(), p.getCreator().getUsername()))
+                .map(this::toDTO)
                 .collect(Collectors.toList());
     }
 
     public List<PlaylistDTO> getSavedPlaylists(Long userId) {
         return savedPlaylistRepository.findByUserUserId(userId)
                 .stream()
-                .map(sp -> {
-                    Playlist p = sp.getPlaylist();
-                    return new PlaylistDTO(p.getId(), p.getName(), p.getCreator().getUsername());
-                })
+                .map(sp -> toDTO(sp.getPlaylist()))
                 .collect(Collectors.toList());
     }
 
@@ -105,5 +118,55 @@ public class PlaylistService {
         if (!savedPlaylistRepository.existsById(id)) {
             savedPlaylistRepository.save(new SavedPlaylist(id, user, playlist, java.time.LocalDateTime.now()));
         }
+    }
+
+    @Transactional
+    public void deletePlaylist(Long playlistId, Long requesterId){
+        Playlist playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new RuntimeException("Playlist not fund"));
+        if(!playlist.getCreator().getUserId().equals(requesterId)){
+            throw new RuntimeException("Only the creator can delete the playlist");
+        }
+        playlistTrackRepository.deleteAllByPlaylist_Id(playlistId);
+        savedPlaylistRepository.deleteAllByPlaylist_Id(playlistId);
+        playlistRepository.deleteById(playlistId);
+    }
+
+    public PlaylistDTO uploadCover(Long playlistId, Long requesterId, MultipartFile coverImage) throws IOException {
+        Playlist playlist = playlistRepository.findById(playlistId)
+                .orElseThrow(() -> new RuntimeException("Playlist not found"));
+        if (!playlist.getCreator().getUserId().equals(requesterId)) {
+            throw new RuntimeException("Only the creator can edit this playlist");
+        }
+        if (coverImage == null || coverImage.isEmpty()) {
+            throw new RuntimeException("Cover image is empty");
+        }
+
+        Path dir = Paths.get(coverDir);
+        if (!Files.exists(dir)) {
+            Files.createDirectories(dir);
+        }
+
+        String fileName = UUID.randomUUID() + "_cover.png";
+        Path target = dir.resolve(fileName);
+        BufferedImage buffered = ImageIO.read(coverImage.getInputStream());
+        if (buffered == null) {
+            throw new RuntimeException("Unsupported image format");
+        }
+        ImageIO.write(buffered, "PNG", target.toFile());
+
+        playlist.setCoverPath(target.toString());
+        Playlist saved = playlistRepository.save(playlist);
+        return toDTO(saved);
+    }
+
+    private PlaylistDTO toDTO(Playlist p) {
+        return new PlaylistDTO(
+                p.getId(),
+                p.getName(),
+                p.getCreator().getUsername(),
+                p.getCreator().getUserId(),
+                p.getCoverPath()
+        );
     }
 }

@@ -5,7 +5,6 @@ import com.example.core.Session;
 import com.example.models.TrackDTO;
 import com.example.services.TrackService;
 
-import javafx.scene.layout.StackPane;
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -34,7 +33,7 @@ public class TrackDetailView extends VBox{
         Button btnBack = new Button("<- Back");
         btnBack.setStyle(
             "-fx-background-color: transparent;"+
-            "-fx-text-fill: #B39DDB"+
+            "-fx-text-fill: #B39DDB;"+
             "-fx-cursor: hand;"
         );
         btnBack.setOnAction(e -> onBack.run());
@@ -113,7 +112,7 @@ public class TrackDetailView extends VBox{
         
         SVGPath heartFilled = new SVGPath();
         heartFilled.setContent("M12 21.35l-1.45-1.32C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z");
-        heartFilled.setFill(Color.web("#e74c3c"));
+        heartFilled.setFill(Color.web("#B39DDB"));
         heartFilled.setScaleX(1.1);
         heartFilled.setScaleY(1.1);
         heartFilled.setVisible(initialLiked);

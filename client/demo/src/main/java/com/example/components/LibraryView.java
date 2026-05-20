@@ -1,10 +1,15 @@
 package com.example.components;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.example.core.Session;
 import com.example.models.PlaylistDTO;
 import com.example.models.TrackDTO;
 import com.example.services.PlaylistService;
 import com.example.services.TrackService;
+
 import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,9 +17,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class LibraryView extends VBox {
 
@@ -75,10 +77,10 @@ public class LibraryView extends VBox {
                         new SeeAllView("Liked Tracks", data.liked, data.likedIds, contentArea, goLibrary, goLibrary)
                     );
                 }),
-                new PlaylistSection("My Playlists", data.playlists, () -> {
+                new PlaylistSection("My Playlists", data.playlists, contentArea, goLibrary, () -> {
                     contentArea.getChildren().clear();
                     contentArea.getChildren().add(
-                        SeeAllView.forPlaylists("My Playlists", data.playlists, goLibrary)
+                        SeeAllView.forPlaylists("My Playlists", data.playlists, contentArea, goLibrary)
                     );
                 })
             );

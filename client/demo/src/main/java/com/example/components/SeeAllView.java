@@ -13,13 +13,16 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class SeeAllView extends VBox {
 
-    private SeeAllView() {}
+    private SeeAllView() {
+    }
 
-    public SeeAllView(String title, List<TrackDTO> tracks, Set<Long> likedIds, Runnable onBack) {
+    public SeeAllView(String title, List<TrackDTO> tracks, Set<Long> likedIds,
+                StackPane contentArea, Runnable onBack, Runnable onTrackBack) {
         setup(title, onBack);
 
         FlowPane grid = new FlowPane();
@@ -34,14 +37,15 @@ public class SeeAllView extends VBox {
         } else {
             for (TrackDTO track : tracks) {
                 boolean liked = likedIds != null && likedIds.contains(track.getId());
-                grid.getChildren().add(new TrackCard(track, liked, null, null));
+                grid.getChildren().add(new TrackCard(track, liked, contentArea, onTrackBack));
             }
         }
 
         this.getChildren().add(buildScroll(grid));
     }
 
-    public static SeeAllView forPlaylists(String title, List<PlaylistDTO> playlists, Runnable onBack) {
+    public static SeeAllView forPlaylists(String title, List<PlaylistDTO> playlists,
+                                          StackPane contentArea, Runnable onBack) {
         SeeAllView view = new SeeAllView();
         view.setup(title, onBack);
 
@@ -56,7 +60,7 @@ public class SeeAllView extends VBox {
             grid.getChildren().add(empty);
         } else {
             for (PlaylistDTO pl : playlists) {
-                grid.getChildren().add(new PlaylistCard(pl));
+                grid.getChildren().add(new PlaylistCard(pl, contentArea, onBack));
             }
         }
 
@@ -71,10 +75,10 @@ public class SeeAllView extends VBox {
 
         Button btnBack = new Button("← Back");
         btnBack.setStyle(
-            "-fx-background-color: transparent;" +
-            "-fx-text-fill: #B39DDB;" +
-            "-fx-font-size: 13px;" +
-            "-fx-cursor: hand;"
+                "-fx-background-color: transparent;"
+                + "-fx-text-fill: #B39DDB;"
+                + "-fx-font-size: 13px;"
+                + "-fx-cursor: hand;"
         );
         btnBack.setOnAction(e -> onBack.run());
 

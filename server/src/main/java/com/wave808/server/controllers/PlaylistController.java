@@ -5,6 +5,7 @@ import com.wave808.server.dto.TrackDTO;
 import com.wave808.server.services.PlaylistService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Map;
 
@@ -57,5 +58,19 @@ public class PlaylistController {
     public ResponseEntity<Void> savePlaylist(@RequestBody Map<String, Long> body) {
         playlistService.savePlaylist(body.get("userId"), body.get("playlistId"));
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{playlistId}")
+    public ResponseEntity<Void> deletePlaylist(@PathVariable Long playlistId,
+                                            @RequestParam("userId") Long userId) {
+        playlistService.deletePlaylist(playlistId, userId);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{playlistId}/cover")
+    public ResponseEntity<PlaylistDTO> uploadCover(@PathVariable Long playlistId,
+                                                @RequestParam("userId") Long userId,
+                                                @RequestParam("cover") MultipartFile cover) throws Exception {
+        return ResponseEntity.ok(playlistService.uploadCover(playlistId, userId, cover));
     }
 }

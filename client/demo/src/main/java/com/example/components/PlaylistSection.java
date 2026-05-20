@@ -1,6 +1,9 @@
 package com.example.components;
 
+import java.util.List;
+
 import com.example.models.PlaylistDTO;
+
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -8,12 +11,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import java.util.List;
 
 public class PlaylistSection extends VBox {
 
-    public PlaylistSection(String title, List<PlaylistDTO> playlists, Runnable onSeeAll) {
+    public PlaylistSection(String title, List<PlaylistDTO> playlists,
+                           StackPane contentArea, Runnable onBack, Runnable onSeeAll) {
         this.setSpacing(12);
         this.setPadding(new Insets(0, 0, 20, 0));
 
@@ -60,7 +64,7 @@ public class PlaylistSection extends VBox {
             cardsRow.getChildren().add(empty);
         } else {
             for (PlaylistDTO pl : playlists) {
-                cardsRow.getChildren().add(new PlaylistCard(pl));
+                cardsRow.getChildren().add(new PlaylistCard(pl, contentArea, onBack));
             }
         }
 
