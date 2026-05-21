@@ -1,6 +1,7 @@
 package com.example.controllers;
 
 import com.example.components.FriendsPanel;
+import com.example.components.HomeView;
 import com.example.components.MainContentPanel;
 import com.example.components.NowPlayingPanel;
 import com.example.components.PlayerControlsPanel;
@@ -10,14 +11,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
-
 public class MainController extends HBox {
 
     private MainContentPanel mainContent;
 
     public MainController() {
-
-        
 
         this.setSpacing(10);
         this.setPadding(new Insets(0));
@@ -48,7 +46,6 @@ public class MainController extends HBox {
 
         this.getChildren().addAll(colLeft, colRight);
 
-        
     }
 
     public void refreshUserData() {
@@ -57,5 +54,13 @@ public class MainController extends HBox {
         }
     }
 
-    
+    public void reloadHome() {
+        if (mainContent != null) {
+            mainContent.getContentArea().getChildren().clear();
+            mainContent.getContentArea().getChildren().add(
+                    new HomeView(mainContent.getContentArea())
+            );
+        }
+    }
+
 }

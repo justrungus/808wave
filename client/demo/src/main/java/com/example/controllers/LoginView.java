@@ -14,11 +14,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
-public class LoginView extends VBox{
+public class LoginView extends VBox {
 
     private final AuthService authService = new AuthService();
 
-    public LoginView(){
+    public LoginView() {
         this.getStyleClass().add("glass-panel");
         this.setAlignment(Pos.CENTER);
         this.setSpacing(20);
@@ -75,9 +75,17 @@ public class LoginView extends VBox{
                 }
             };
 
+            // loginTask.setOnSucceeded(event -> {
+            //     Session.getInstance().setUsername(loginTask.getValue().getUsername());
+            //     Session.getInstance().setUserId(loginTask.getValue().getUserId());
+            //     Router.navigateTo("MAIN");
+            //     btnLogin.setDisable(false);
+            // });
             loginTask.setOnSucceeded(event -> {
-                Session.getInstance().setUsername(loginTask.getValue().getUsername());
-                Session.getInstance().setUserId(loginTask.getValue().getUserId());
+                User u = loginTask.getValue();
+                System.out.println("DEBUG login - userId: " + u.getUserId() + " username: " + u.getUsername());
+                Session.getInstance().setUsername(u.getUsername());
+                Session.getInstance().setUserId(u.getUserId());
                 Router.navigateTo("MAIN");
                 btnLogin.setDisable(false);
             });

@@ -22,23 +22,18 @@ public class Router {
     }
 
     public static void navigateTo(String name) {
-        Scene scene = routes.get(name);
-        if (scene != null) {
-
-            // Si vamos a la pantalla principal...
-            if (name.equals("MAIN")) {
-                // 1. Comprobamos si la raíz es un MainController
-                if (scene.getRoot() instanceof MainController) {
-                    // 2. Creamos la variable y hacemos el cast manualmente
-                    MainController controller = (MainController) scene.getRoot();
-                    // 3. Llamamos al método
-                    controller.refreshUserData();
-                }
+    Scene scene = routes.get(name);
+    if (scene != null) {
+        if (name.equals("MAIN")) {
+            if (scene.getRoot() instanceof MainController) {
+                MainController controller = (MainController) scene.getRoot();
+                controller.refreshUserData();
+                // forzar recarga del home con el usuario ya en sesion
+                controller.reloadHome();
             }
         }
-
-        window.setScene(scene);
-        window.show();
-
     }
+    window.setScene(scene);
+    window.show();
+}
 }

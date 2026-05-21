@@ -124,7 +124,6 @@ public class MainContentPanel extends VBox {
         searchField.getStyleClass().add("search-pill");
         HBox.setHgrow(searchField, Priority.ALWAYS);
 
-        // preview en tiempo real 
         searchField.textProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null && newVal.trim().length() >= 2) {
                 contentArea.getChildren().clear();
@@ -132,7 +131,6 @@ public class MainContentPanel extends VBox {
             }
         });
 
-        // enter  resultados completos
         searchField.setOnAction(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
@@ -169,6 +167,7 @@ public class MainContentPanel extends VBox {
 
         Runnable openOwnProfile = () -> {
             Long myId = Session.getInstance().getUserId();
+            System.out.println("DEBUG avatar click - userId: " + myId);
             if (myId == null) return;
             Runnable goHome = () -> {
                 contentArea.getChildren().clear();
@@ -220,6 +219,11 @@ public class MainContentPanel extends VBox {
                 }
             } catch (Exception ignored) {}
         }
+    }
+
+    public void reloadHome() {
+        contentArea.getChildren().clear();
+        contentArea.getChildren().add(new HomeView(contentArea));
     }
 
     public StackPane getContentArea() {

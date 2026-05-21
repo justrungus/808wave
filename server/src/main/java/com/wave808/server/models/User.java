@@ -1,6 +1,5 @@
 package com.wave808.server.models;
 
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +22,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
-
 public class User {
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId;
 
     @Column(unique = true, nullable = false)
@@ -43,12 +40,13 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "profile_picture_path")
+    private String profilePicturePath;
 
-    // seguidores (relacion reflexiva)
     @ManyToMany
     @JoinTable(
         name = "user_followers",
-        joinColumns= @JoinColumn(name = "follower_id"),
+        joinColumns = @JoinColumn(name = "follower_id"),
         inverseJoinColumns = @JoinColumn(name = "followed_id")
     )
     private List<User> following = new ArrayList<>();

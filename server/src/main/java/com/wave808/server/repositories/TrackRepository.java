@@ -10,4 +10,6 @@ public interface TrackRepository extends JpaRepository<Track, Long> {
     List<Track> findByUploaderUserIdOrderByUploadedAtDesc(Long userId);
     List<Track> findAllByOrderByUploadedAtDesc();
     List<Track> findAllByOrderByPlayCountDesc();
+    List<Track> findByUploaderUserIdInOrderByUploadedAtDesc(List<Long> userIds);
+    List<Track> findByTitleContainingIgnoreCase(String query);
 }
