@@ -11,7 +11,10 @@ import java.util.stream.Collectors;
 
 import javax.imageio.ImageIO;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.wave808.server.dto.PlaylistDTO;
 import com.wave808.server.dto.TrackDTO;
@@ -27,11 +30,6 @@ import com.wave808.server.repositories.PlaylistTrackRepository;
 import com.wave808.server.repositories.SavedPlaylistRepository;
 import com.wave808.server.repositories.TrackRepository;
 import com.wave808.server.repositories.UserRepository;
-
-import org.springframework.beans.factory.annotation.Value;
-
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class PlaylistService {
