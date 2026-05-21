@@ -4,13 +4,12 @@ public class Session {
     private static Session instance;
     private String username;
     private Long userId;
+    private String profilePicturePath;
 
     private Session() {}
 
     public static Session getInstance() {
-        if (instance == null) {
-            instance = new Session();
-        }
+        if (instance == null) instance = new Session();
         return instance;
     }
 
@@ -20,12 +19,14 @@ public class Session {
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
 
+    public String getProfilePicturePath() { return profilePicturePath; }
+    public void setProfilePicturePath(String path) { this.profilePicturePath = path; }
+
     public void logout() {
         this.username = null;
         this.userId = null;
+        this.profilePicturePath = null;
     }
 
-    public boolean isLoggedIn() {
-        return this.username != null;
-    }
+    public boolean isLoggedIn() { return this.username != null; }
 }

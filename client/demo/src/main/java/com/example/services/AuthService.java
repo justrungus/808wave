@@ -43,7 +43,7 @@ public class AuthService {
         if (response.statusCode() == 200) {
             return gson.fromJson(response.body(), User.class);
         } else {
-            // Si el servidor da error (ej. "El email ya existe"), explotamos con ese mensaje
+            
             throw new Exception(response.body());
         }
     }

@@ -10,6 +10,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.StackPane;
@@ -20,19 +22,19 @@ import javafx.scene.shape.SVGPath;
 import javafx.stage.Stage;
 
 
-public class MainContentPanel extends VBox{
+public class MainContentPanel extends VBox {
 
     private double xOffset = 0;
     private double yOffset = 0;
 
     private Label profileName;
-    
+    private Circle avatarCircle;
+    private ImageView avatarImageView;
     private StackPane contentArea;
 
-    //vistas
     private UploadView uploadView;
 
-    public MainContentPanel(){
+    public MainContentPanel() {
         this.getStyleClass().add("glass-panel");
 
         uploadView = new UploadView();
@@ -45,9 +47,9 @@ public class MainContentPanel extends VBox{
         this.getChildren().add(topBar);
 
         topBar.getChildren().addAll(
-            leftPill(),
-            searchFieldPill(),
-            rightPill()
+                leftPill(),
+                searchFieldPill(),
+                rightPill()
         );
 
         contentArea = new StackPane();
@@ -60,24 +62,23 @@ public class MainContentPanel extends VBox{
     private SVGPath makeIcon(String svgPathData) {
         SVGPath icon = new SVGPath();
         icon.setContent(svgPathData);
-        icon.setFill(Color.web("#4a4a4a")); 
+        icon.setFill(Color.web("#4a4a4a"));
         return icon;
     }
 
-    private void makeDraggable(Node node){
+    private void makeDraggable(Node node) {
         node.setOnMousePressed(event -> {
             xOffset = event.getSceneX();
             yOffset = event.getSceneY();
         });
-
-        node.setOnMouseDragged(event ->{
+        node.setOnMouseDragged(event -> {
             Stage stage = (Stage) this.getScene().getWindow();
             stage.setX(event.getScreenX() - xOffset);
             stage.setY(event.getScreenY() - yOffset);
         });
     }
 
-    private HBox leftPill(){
+    private HBox leftPill() {
         HBox leftPill = new HBox(5);
         leftPill.getStyleClass().add("pill-box");
 
@@ -104,37 +105,81 @@ public class MainContentPanel extends VBox{
             contentArea.getChildren().clear();
             contentArea.getChildren().add(new HomeView(contentArea));
         });
-
         btnLibrary.setOnAction(e -> {
             contentArea.getChildren().clear();
             contentArea.getChildren().add(new LibraryView(contentArea));
         });
-
         btnUpload.setOnAction(e -> {
             contentArea.getChildren().clear();
             contentArea.getChildren().add(uploadView);
         });
 
-        return leftPill;    
+        return leftPill;
     }
 
-    private TextField searchFieldPill(){
-        TextField searchField = new TextField("Search bar");
+    private TextField searchFieldPill() {
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search tracks, users, playlists...");
         searchField.getStyleClass().add(Styles.ROUNDED);
         searchField.getStyleClass().add("search-pill");
         HBox.setHgrow(searchField, Priority.ALWAYS);
+
+        // preview en tiempo real 
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && newVal.trim().length() >= 2) {
+                contentArea.getChildren().clear();
+                contentArea.getChildren().add(new SearchView(newVal.trim(), false, contentArea));
+            }
+        });
+
+        // enter  resultados completos
+        searchField.setOnAction(e -> {
+            String query = searchField.getText().trim();
+            if (!query.isEmpty()) {
+                contentArea.getChildren().clear();
+                contentArea.getChildren().add(new SearchView(query, true, contentArea));
+            }
+        });
+
         return searchField;
     }
 
-    private HBox rightPill(){
+    private HBox rightPill() {
         HBox rightPill = new HBox(10);
         rightPill.setAlignment(Pos.CENTER);
         rightPill.getStyleClass().add("pill-box");
-        
-        Circle avatar = new Circle(12);
-        avatar.setFill(Color.LIGHTGREY);
+
+        avatarCircle = new Circle(12);
+        avatarCircle.setFill(Color.LIGHTGREY);
+
+        avatarImageView = new ImageView();
+        avatarImageView.setFitWidth(24);
+        avatarImageView.setFitHeight(24);
+        avatarImageView.setPreserveRatio(false);
+        Circle avatarClip = new Circle(12, 12, 12);
+        avatarImageView.setClip(avatarClip);
+        avatarImageView.setVisible(false);
+
+        StackPane avatarPane = new StackPane(avatarCircle, avatarImageView);
+        avatarPane.setPrefSize(24, 24);
+        avatarPane.setStyle("-fx-cursor: hand;");
 
         profileName = new Label("Guest");
+        profileName.setStyle("-fx-cursor: hand;");
+
+        Runnable openOwnProfile = () -> {
+            Long myId = Session.getInstance().getUserId();
+            if (myId == null) return;
+            Runnable goHome = () -> {
+                contentArea.getChildren().clear();
+                contentArea.getChildren().add(new HomeView(contentArea));
+            };
+            contentArea.getChildren().clear();
+            contentArea.getChildren().add(new ProfileView(myId, contentArea, goHome));
+        };
+
+        avatarPane.setOnMouseClicked(e -> openOwnProfile.run());
+        profileName.setOnMouseClicked(e -> openOwnProfile.run());
 
         Button btnNotifications = new Button();
         Button btnMaximize = new Button("🗖");
@@ -152,18 +197,31 @@ public class MainContentPanel extends VBox{
 
         btnClose.setOnAction(event -> Platform.exit());
 
-        rightPill.getChildren().addAll(avatar, profileName, btnNotifications, btnMaximize, btnClose);
+        rightPill.getChildren().addAll(avatarPane, profileName, btnNotifications, btnMaximize, btnClose);
 
         return rightPill;
     }
 
-    public void refreshUserData(){
-        String currentUserName = Session.getInstance().getUsername();
-        if (currentUserName != null) {
-            this.profileName.setText(currentUserName);
+    public void refreshUserData() {
+        String username = Session.getInstance().getUsername();
+        if (username != null) {
+            profileName.setText(username);
+        }
+
+        String picPath = Session.getInstance().getProfilePicturePath();
+        if (picPath != null && avatarImageView != null) {
+            try {
+                String safePath = picPath.replace(" ", "%20");
+                Image img = new Image("file:" + safePath);
+                if (!img.isError()) {
+                    avatarImageView.setImage(img);
+                    avatarImageView.setVisible(true);
+                    avatarCircle.setVisible(false);
+                }
+            } catch (Exception ignored) {}
         }
     }
-    
+
     public StackPane getContentArea() {
         return contentArea;
     }
