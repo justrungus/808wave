@@ -95,7 +95,13 @@ public class TrackDetailView extends VBox{
         lblTitle.setWrapText(true);
 
         Label lblArtist = new Label(track.getUploaderUsername());
-        lblArtist.setStyle("-fx-font-size: 15px; -fx-text-fill: #B39DDB;");
+        lblArtist.setStyle("-fx-font-size: 15px; -fx-text-fill: #B39DDB; -fx-cursor: hand;");
+        lblArtist.setOnMouseClicked(e -> {
+            if (contentArea != null && track.getUploaderId() != null) {
+                contentArea.getChildren().clear();
+                contentArea.getChildren().add(new ProfileView(track.getUploaderId(), contentArea, onBack));
+            }
+        });
 
         //botones
         HBox btnRow = new HBox(10);

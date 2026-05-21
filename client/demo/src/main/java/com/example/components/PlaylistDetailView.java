@@ -285,7 +285,18 @@ public class PlaylistDetailView extends VBox{
         Label lblTitle = new Label(track.getTitle());
         lblTitle.setStyle("-fx-font-size: 13px; -fx-text-fill: #eeeeee; -fx-font-weight: bold;");
         Label lblArtist = new Label(track.getUploaderUsername());
-        lblArtist.setStyle("-fx-font-size: 11px; -fx-text-fill: #B39DDB;");
+        lblArtist.setStyle("-fx-font-size: 11px; -fx-text-fill: #B39DDB; -fx-cursor: hand;");
+        lblArtist.setOnMouseClicked(e -> {
+            e.consume();
+            if (contentArea != null && track.getUploaderId() != null) {
+                Runnable goBack = () -> {
+                    contentArea.getChildren().clear();
+                    contentArea.getChildren().add(new PlaylistDetailView(playlist, contentArea, onBack));
+                };
+                contentArea.getChildren().clear();
+                contentArea.getChildren().add(new ProfileView(track.getUploaderId(), contentArea, goBack));
+            }
+        });
         titleBox.getChildren().addAll(lblTitle, lblArtist);
         HBox.setHgrow(titleBox, Priority.ALWAYS);
 

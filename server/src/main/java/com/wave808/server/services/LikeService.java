@@ -22,8 +22,8 @@ public class LikeService {
     private final UserRepository userRepository;
 
     public LikeService(LikedTrackRepository likedTrackRepository,
-                       TrackRepository trackRepository,
-                       UserRepository userRepository) {
+                        TrackRepository trackRepository,
+                        UserRepository userRepository) {
         this.likedTrackRepository = likedTrackRepository;
         this.trackRepository = trackRepository;
         this.userRepository = userRepository;
@@ -34,14 +34,14 @@ public class LikeService {
 
         if (likedTrackRepository.existsById(id)) {
             likedTrackRepository.deleteById(id);
-            return false; // ya no tiene like
+            return false;
         } else {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new RuntimeException("User not found"));
             Track track = trackRepository.findById(trackId)
                     .orElseThrow(() -> new RuntimeException("Track not found"));
             likedTrackRepository.save(new LikedTrack(id, user, track, java.time.LocalDateTime.now()));
-            return true; // ahora tiene like
+            return true;
         }
     }
 
@@ -57,6 +57,7 @@ public class LikeService {
                             t.getBpm(),
                             t.getMusicalKey(),
                             t.getUploader().getUsername(),
+                            t.getUploader().getUserId(),
                             t.getCoverPath(),
                             t.getDescription()
                     );

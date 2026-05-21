@@ -74,17 +74,7 @@ public class TrackService {
         track.setUploader(uploader);
 
         Track saved = trackRepository.save(track);
-
-        return new TrackDTO(
-                saved.getTrackId(),
-                saved.getTitle(),
-                saved.getGenre(),
-                saved.getBpm(),
-                saved.getMusicalKey(),
-                saved.getUploader().getUsername(),
-                saved.getCoverPath(),
-                saved.getDescription()
-        );
+        return toDTO(saved);
     }
 
     public List<TrackDTO> getRecentTracks() {
@@ -116,6 +106,7 @@ public class TrackService {
                 t.getBpm(),
                 t.getMusicalKey(),
                 t.getUploader().getUsername(),
+                t.getUploader().getUserId(),
                 t.getCoverPath(),
                 t.getDescription()
         );

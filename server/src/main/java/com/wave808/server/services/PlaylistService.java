@@ -87,8 +87,17 @@ public class PlaylistService {
                 .stream()
                 .map(pt -> {
                     Track t = pt.getTrack();
-                    return new TrackDTO(t.getTrackId(), t.getTitle(), t.getGenre(),
-                            t.getBpm(), t.getMusicalKey(), t.getUploader().getUsername(), t.getCoverPath(), t.getDescription());
+                    return new TrackDTO(
+                            t.getTrackId(),
+                            t.getTitle(),
+                            t.getGenre(),
+                            t.getBpm(),
+                            t.getMusicalKey(),
+                            t.getUploader().getUsername(),
+                            t.getUploader().getUserId(),
+                            t.getCoverPath(),
+                            t.getDescription()
+                    );
                 })
                 .collect(Collectors.toList());
     }
@@ -119,10 +128,10 @@ public class PlaylistService {
     }
 
     @Transactional
-    public void deletePlaylist(Long playlistId, Long requesterId){
+    public void deletePlaylist(Long playlistId, Long requesterId) {
         Playlist playlist = playlistRepository.findById(playlistId)
-                .orElseThrow(() -> new RuntimeException("Playlist not fund"));
-        if(!playlist.getCreator().getUserId().equals(requesterId)){
+                .orElseThrow(() -> new RuntimeException("Playlist not found"));
+        if (!playlist.getCreator().getUserId().equals(requesterId)) {
             throw new RuntimeException("Only the creator can delete the playlist");
         }
         playlistTrackRepository.deleteAllByPlaylist_Id(playlistId);
@@ -141,16 +150,12 @@ public class PlaylistService {
         }
 
         Path dir = Paths.get(coverDir);
-        if (!Files.exists(dir)) {
-            Files.createDirectories(dir);
-        }
+        if (!Files.exists(dir)) Files.createDirectories(dir);
 
         String fileName = UUID.randomUUID() + "_cover.png";
         Path target = dir.resolve(fileName);
         BufferedImage buffered = ImageIO.read(coverImage.getInputStream());
-        if (buffered == null) {
-            throw new RuntimeException("Unsupported image format");
-        }
+        if (buffered == null) throw new RuntimeException("Unsupported image format");
         ImageIO.write(buffered, "PNG", target.toFile());
 
         playlist.setCoverPath(target.toString());

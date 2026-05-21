@@ -169,8 +169,17 @@ public class UserService {
     }
 
     private TrackDTO trackToDTO(Track t) {
-        return new TrackDTO(t.getTrackId(), t.getTitle(), t.getGenre(), t.getBpm(),
-                t.getMusicalKey(), t.getUploader().getUsername(), t.getCoverPath(), t.getDescription());
+        return new TrackDTO(
+                t.getTrackId(),
+                t.getTitle(),
+                t.getGenre(),
+                t.getBpm(),
+                t.getMusicalKey(),
+                t.getUploader().getUsername(),
+                t.getUploader().getUserId(),
+                t.getCoverPath(),
+                t.getDescription()
+        );
     }
 
     private PlaylistDTO playlistToDTO(com.wave808.server.models.Playlist p) {
