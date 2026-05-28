@@ -101,6 +101,29 @@ public class UserService {
         }
     }
 
+
+    public void heartbeat(Long userId) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/" + userId + "/heartbeat"))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+        client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+
+    public Map<String, List<User>> getFriendsWithStatus(Long userId) throws Exception {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + "/" + userId + "/friends/status"))
+                .GET().build();
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if (response.statusCode() == 200) {
+            Type mapType = new TypeToken<Map<String, List<User>>>() {}.getType();
+            return gson.fromJson(response.body(), mapType);
+        } else {
+            throw new Exception(response.body());
+        }
+    }
+
     public User updateProfilePicture(Long userId, File imageFile) throws Exception {
         String boundary = UUID.randomUUID().toString();
         byte[] imageBytes = Files.readAllBytes(imageFile.toPath());

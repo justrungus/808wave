@@ -9,14 +9,15 @@ import com.example.components.PlayerControlsPanel;
 import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 public class MainController extends HBox {
 
     private MainContentPanel mainContent;
+    private FriendsPanel friendsPanel;
 
     public MainController() {
-
         this.setSpacing(10);
         this.setPadding(new Insets(0));
         this.setStyle("-fx-background-color: transparent;");
@@ -24,14 +25,13 @@ public class MainController extends HBox {
         VBox colLeft = new VBox(10);
         colLeft.setPrefWidth(300);
 
-        FriendsPanel friends = new FriendsPanel();
+        friendsPanel = new FriendsPanel();
         NowPlayingPanel nowPlaying = new NowPlayingPanel();
 
         nowPlaying.setMinHeight(275);
+        VBox.setVgrow(friendsPanel, Priority.ALWAYS);
 
-        VBox.setVgrow(friends, Priority.ALWAYS);
-
-        colLeft.getChildren().addAll(friends, nowPlaying);
+        colLeft.getChildren().addAll(friendsPanel, nowPlaying);
 
         VBox colRight = new VBox(10);
         HBox.setHgrow(colRight, Priority.ALWAYS);
@@ -43,14 +43,15 @@ public class MainController extends HBox {
         controls.setPrefHeight(50);
 
         colRight.getChildren().addAll(mainContent, controls);
-
         this.getChildren().addAll(colLeft, colRight);
-
     }
 
     public void refreshUserData() {
         if (mainContent != null) {
             mainContent.refreshUserData();
+        }
+        if (friendsPanel != null) {
+            friendsPanel.reload();
         }
     }
 
@@ -62,5 +63,8 @@ public class MainController extends HBox {
             );
         }
     }
-
+    
+    public StackPane getContentArea() {
+        return mainContent != null ? mainContent.getContentArea() : null;
+    }
 }

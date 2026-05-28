@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -51,7 +53,6 @@ public class UserService {
             throw new IllegalArgumentException("Username already in use");
         if (userRepository.existsByEmail(email))
             throw new IllegalArgumentException("Email already in use");
-
         User user = new User();
         user.setUsername(username);
         user.setEmail(email);
@@ -134,6 +135,37 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
+    public Map<String, List<UserDTO>> getFriendsWithStatus(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        java.time.LocalDateTime threshold = java.time.LocalDateTime.now().minusSeconds(60);
+
+        List<UserDTO> online = new ArrayList<>();
+        List<UserDTO> offline = new ArrayList<>();
+
+        user.getFollowing().stream()
+                .filter(followed -> followed.getFollowers().stream()
+                        .anyMatch(f -> f.getUserId().equals(userId)))
+                .forEach(friend -> {
+                    if (friend.getLastSeen() != null && friend.getLastSeen().isAfter(threshold)) {
+                        online.add(toDTO(friend));
+                    } else {
+                        offline.add(toDTO(friend));
+                    }
+                });
+
+        return Map.of("online", online, "offline", offline);
+    }
+
+    @Transactional
+    public void heartbeat(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        user.setLastSeen(java.time.LocalDateTime.now());
+        userRepository.save(user);
+    }
+
     public List<TrackDTO> getFollowingFeed(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -169,17 +201,9 @@ public class UserService {
     }
 
     private TrackDTO trackToDTO(Track t) {
-        return new TrackDTO(
-                t.getTrackId(),
-                t.getTitle(),
-                t.getGenre(),
-                t.getBpm(),
-                t.getMusicalKey(),
-                t.getUploader().getUsername(),
-                t.getUploader().getUserId(),
-                t.getCoverPath(),
-                t.getDescription()
-        );
+        return new TrackDTO(t.getTrackId(), t.getTitle(), t.getGenre(), t.getBpm(),
+                t.getMusicalKey(), t.getUploader().getUsername(), t.getUploader().getUserId(),
+                t.getCoverPath(), t.getDescription());
     }
 
     private PlaylistDTO playlistToDTO(com.wave808.server.models.Playlist p) {

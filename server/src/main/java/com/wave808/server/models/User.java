@@ -43,6 +43,9 @@ public class User {
     @Column(name = "profile_picture_path")
     private String profilePicturePath;
 
+    @Column(name = "last_seen")
+    private java.time.LocalDateTime lastSeen;
+
     @ManyToMany
     @JoinTable(
         name = "user_followers",

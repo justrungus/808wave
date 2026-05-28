@@ -53,6 +53,18 @@ public class UserController {
         return ResponseEntity.ok(userService.getFriends(userId));
     }
 
+    @GetMapping("/{userId}/friends/status")
+    public ResponseEntity<Map<String, List<UserDTO>>> getFriendsWithStatus(
+            @PathVariable Long userId) {
+        return ResponseEntity.ok(userService.getFriendsWithStatus(userId));
+    }
+
+    @PostMapping("/{userId}/heartbeat")
+    public ResponseEntity<Void> heartbeat(@PathVariable Long userId) {
+        userService.heartbeat(userId);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{userId}/following-feed")
     public ResponseEntity<List<TrackDTO>> getFollowingFeed(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getFollowingFeed(userId));
