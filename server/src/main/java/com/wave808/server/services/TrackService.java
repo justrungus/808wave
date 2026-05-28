@@ -98,6 +98,13 @@ public class TrackService {
                 .collect(java.util.stream.Collectors.toList());
     }
 
+    public List<TrackDTO> searchTracks(String query){
+        return trackRepository.findByTitleContainingIgnoreCase(query)
+                .stream()
+                .map(this::toDTO)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
     private TrackDTO toDTO(Track t) {
         return new TrackDTO(
                 t.getTrackId(),

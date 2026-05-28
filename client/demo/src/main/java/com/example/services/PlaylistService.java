@@ -1,10 +1,5 @@
 package com.example.services;
 
-import com.example.models.PlaylistDTO;
-import com.example.models.TrackDTO;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
 import java.io.File;
 import java.lang.reflect.Type;
 import java.net.URI;
@@ -15,6 +10,11 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import com.example.models.PlaylistDTO;
+import com.example.models.TrackDTO;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class PlaylistService {
     
@@ -35,6 +35,12 @@ public class PlaylistService {
         }else{
             throw new Exception(response.body());
         }
+    }
+
+
+    public List<PlaylistDTO> searchPlaylists(String query) throws Exception {
+        String encoded = java.net.URLEncoder.encode(query, java.nio.charset.StandardCharsets.UTF_8);
+        return getList(BASE_URL + "/search?query=" + encoded);
     }
 
     public List<PlaylistDTO> getMyPlaylists(Long userId) throws Exception {

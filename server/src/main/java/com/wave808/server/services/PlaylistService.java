@@ -127,6 +127,14 @@ public class PlaylistService {
         }
     }
 
+
+    public List<PlaylistDTO> searchPlaylists(String query) {
+        return playlistRepository.findByNameContainingIgnoreCase(query)
+                .stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void deletePlaylist(Long playlistId, Long requesterId) {
         Playlist playlist = playlistRepository.findById(playlistId)

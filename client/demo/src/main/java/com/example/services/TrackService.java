@@ -22,6 +22,11 @@ public class TrackService {
     private final Gson gson = new Gson();
     private final String BASE_URL = "http://localhost:8080/api/tracks";
 
+    public List<TrackDTO> searchTracks(String query) throws Exception {
+        String encoded = java.net.URLEncoder.encode(query, java.nio.charset.StandardCharsets.UTF_8);
+        return getList(BASE_URL + "/search?query=" + encoded);
+    }
+
     public List<TrackDTO> getRecentTracks() throws Exception {
         return getList(BASE_URL + "/recent");
     }

@@ -54,6 +54,11 @@ public class TrackController {
         return ResponseEntity.ok(likeService.getLikedTracks(userId));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<TrackDTO>> searchTracks(@RequestParam String query){
+        return ResponseEntity.ok(trackService.searchTracks(query));
+    }
+
     @PostMapping("/like")
     public ResponseEntity<Map<String, Boolean>> toggleLike(@RequestBody Map<String, Long> body) {
         boolean liked = likeService.toggleLike(body.get("userId"), body.get("trackId"));

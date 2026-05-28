@@ -7,4 +7,5 @@ import java.util.List;
 public interface PlaylistRepository extends JpaRepository<Playlist, Long> {
     List<Playlist> findByCreatorUserId(Long userId);
     List<Playlist> findAllByOrderByCreatedAtDesc();
+    List<Playlist> findByNameContainingIgnoreCase(String query);
 }

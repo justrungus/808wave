@@ -19,6 +19,10 @@ public class PlaylistController {
         this.playlistService = playlistService;
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<PlaylistDTO>> searchPlaylists(@RequestParam String query) {
+        return ResponseEntity.ok(playlistService.searchPlaylists(query));
+    }
 
     @PostMapping("/create")
     public ResponseEntity<PlaylistDTO> create(@RequestBody Map<String, Object> body) {
