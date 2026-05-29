@@ -3,6 +3,7 @@ package com.wave808.server.controllers;
 import com.wave808.server.dto.TrackDTO;
 import com.wave808.server.services.TrackService;
 import com.wave808.server.services.LikeService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -34,6 +35,13 @@ public class TrackController {
         return ResponseEntity.ok(trackService.uploadTrack(title, genre, bpm, musicalKey, description, userId, audioFile, coverImage));
     }
 
+    @GetMapping("/{trackId}/stream")
+    public void stream(@PathVariable Long trackId,
+                        @RequestHeader(value = "Range", required = false) String rangeHeader,
+                        HttpServletResponse response) throws Exception {
+        trackService.streamTrack(trackId, rangeHeader, response);
+    }
+
     @GetMapping("/recent")
     public ResponseEntity<List<TrackDTO>> getRecent() {
         return ResponseEntity.ok(trackService.getRecentTracks());
@@ -55,7 +63,7 @@ public class TrackController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<TrackDTO>> searchTracks(@RequestParam String query){
+    public ResponseEntity<List<TrackDTO>> searchTracks(@RequestParam String query) {
         return ResponseEntity.ok(trackService.searchTracks(query));
     }
 

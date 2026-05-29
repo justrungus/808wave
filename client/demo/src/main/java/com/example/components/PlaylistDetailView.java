@@ -313,16 +313,17 @@ public class PlaylistDetailView extends VBox{
             row.getChildren().add(btnRemove);
         }
 
-        // hover
+        
         row.setOnMouseEntered(e -> row.setStyle("-fx-background-color: rgba(179,157,219,0.12); -fx-background-radius: 8; -fx-cursor: hand;"));
         row.setOnMouseExited(e -> row.setStyle("-fx-background-color: transparent; -fx-background-radius: 8; -fx-cursor: hand;"));
 
-        // click en la fila abre el detalle del track. Filtramos clicks sobre los botones.
+        
         final Button finalBtnRemove = btnRemove;
         row.setOnMouseClicked(e -> {
             Object target = e.getTarget();
             if (target == btnLike || (finalBtnRemove != null && target == finalBtnRemove)) return;
             if (contentArea == null) return;
+            com.example.core.AudioPlayer.getInstance().play(track, data.tracks);
             Runnable goPlaylist = () -> {
                 contentArea.getChildren().clear();
                 contentArea.getChildren().add(new PlaylistDetailView(playlist, contentArea, onBack));

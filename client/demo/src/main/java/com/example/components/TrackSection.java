@@ -69,7 +69,7 @@ public class TrackSection extends VBox {
         } else {
             for (TrackDTO track : tracks) {
                 boolean liked = likedIds != null && likedIds.contains(track.getId());
-                cardsRow.getChildren().add(new TrackCard(track, liked, contentArea, onBack));
+                cardsRow.getChildren().add(new TrackCard(track, liked, contentArea, onBack, tracks));
             }
         }
 

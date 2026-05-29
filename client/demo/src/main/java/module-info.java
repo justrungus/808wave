@@ -3,6 +3,7 @@ module com.example {
     requires javafx.fxml;
     requires atlantafx.base;
     requires javafx.graphics;
+    requires javafx.media;
     requires java.net.http;
     requires com.google.gson;
 
