@@ -6,6 +6,7 @@ module com.example {
     requires javafx.media;
     requires java.net.http;
     requires com.google.gson;
+    requires jaudiotagger;
 
     opens com.example.models to com.google.gson;
     opens com.example to javafx.fxml;

@@ -4,6 +4,7 @@ import com.example.core.AudioPlayer;
 import com.example.core.Session;
 import com.example.models.TrackDTO;
 
+import javafx.collections.SetChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
@@ -93,37 +94,42 @@ public class PlayerControlsPanel extends HBox {
         //like
         SVGPath heartEmpty = new SVGPath();
         heartEmpty.setContent("M12.1 18.55l-.1.1l-.11-.1C7.14 14.24 4 11.39 4 8.5C4 6.5 5.5 5 7.5 5c1.54 0 3.04 1 3.57 2.36h1.86C13.46 6 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5c0 2.89-3.14 5.74-7.9 10.05M16.5 3c-1.74 0-3.41.81-4.5 2.08C10.91 3.81 9.24 3 7.5 3C4.42 3 2 5.41 2 8.5c0 3.77 3.4 6.86 8.55 11.53L12 21.35l1.45-1.32C18.6 15.36 22 12.27 22 8.5C22 5.41 19.58 3 16.5 3");
-        heartEmpty.setFill(Color.web("#B39DDB")); heartEmpty.setScaleX(1.1); heartEmpty.setScaleY(1.1);
+        heartEmpty.setFill(Color.web("#B39DDB"));
+        heartEmpty.setScaleX(1.1);
+        heartEmpty.setScaleY(1.1);
 
         SVGPath heartFilled = new SVGPath();
         heartFilled.setContent("M12 21.35l-1.45-1.32C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z");
-        heartFilled.setFill(Color.web("#ffffff")); heartFilled.setScaleX(1.1); heartFilled.setScaleY(1.1);
+        heartFilled.setFill(Color.web("#B39DDB"));
+        heartFilled.setScaleX(1.1);
+        heartFilled.setScaleY(1.1);
         heartFilled.setVisible(false);
+
         StackPane heartIcon = new StackPane(heartEmpty, heartFilled);
         Button btnLike = new Button();
         btnLike.setGraphic(heartIcon);
         btnLike.getStyleClass().add("pill-button");
 
-        //Aleatorio
+        //aleatorio
         String pathShuffle = "M14.23 19v-1h3.1l-3.52-3.521l.713-.713L18 17.242v-2.954h1V19zm-8.522 0L5 18.292L17.292 6h-3.061V5H19v4.712h-1V6.708zm3.678-8.925L5 5.689L5.689 5l4.386 4.387z";
         Button btnShuffle = makeBtn(pathShuffle);
 
-        //Loop
+        //loop
         String pathLoop = "m5.927 18.192l1.735 1.735q.146.146.153.344q.006.198-.153.363q-.166.166-.357.169t-.357-.162l-2.382-2.383q-.131-.131-.184-.268q-.053-.136-.053-.298t.053-.298t.184-.267l2.382-2.383q.146-.146.347-.153t.367.159q.16.165.162.354t-.162.354l-1.735 1.734h10.765q.27 0 .443-.173t.173-.442v-2.885q0-.213.143-.356t.357-.144t.357.144t.143.356v2.885q0 .671-.472 1.143t-1.144.472zM18.073 6.808H7.308q-.27 0-.442.173q-.174.173-.174.442v2.885q0 .213-.143.357t-.357.143t-.356-.143t-.144-.357V7.423q0-.671.472-1.143t1.144-.472h10.765l-1.734-1.735q-.147-.146-.153-.344t.153-.363q.165-.166.356-.169q.192-.003.357.163l2.383 2.382q.13.131.183.268q.053.136.053.298t-.053.298q-.052.136-.183.267l-2.383 2.383q-.146.146-.347.153t-.366-.159q-.16-.165-.163-.354t.163-.354z";
         Button btnLoop = makeBtn(pathLoop);
 
-        //Descarga
+        //descarga
         String pathDownload = "M5.5 20h13q.213 0 .356.144t.144.357t-.144.356T18.5 21h-13q-.213 0-.356-.144T5 20.499t.144-.356T5.5 20m6.13-3.379q-.164-.08-.295-.242l-3.989-5.292q-.298-.404-.077-.851t.723-.447h1.643V3.808q0-.343.232-.576T10.442 3h3.097q.343 0 .575.232t.232.576v5.98h1.643q.502 0 .723.448q.22.447-.077.85l-4.008 5.293q-.122.161-.294.242q-.173.081-.356.081t-.347-.08";
         Button btnDownload = makeBtn(pathDownload);
 
-        //logica botones
+        //-logica-
 
-        //play-pausa
+        //play/pausa
         btnPlay.setOnAction(e -> player.playPause());
         player.playingProperty().addListener((obs, wasPlaying, isPlaying) ->
                 playIcon.setContent(isPlaying ? SVG_PAUSE : SVG_PLAY));
 
-        //siguiente-anterior
+        //siguiente/anterior
         btnNext.setOnAction(e -> player.next());
         btnBack.setOnAction(e -> player.previous());
 
@@ -131,28 +137,36 @@ public class PlayerControlsPanel extends HBox {
         btnShuffle.setOnAction(e -> {
             player.toggleShuffle();
             boolean on = player.shuffleProperty().get();
-            ((SVGPath) btnShuffle.getGraphic()).setFill(Color.web(on ? "#ffffff" : "#B39DDB"));
+            ((SVGPath) btnShuffle.getGraphic()).setFill(Color.web(on ? "#CE93D8" : "#B39DDB"));
+            btnShuffle.setStyle(on
+                ? "-fx-border-color: transparent; -fx-background-color: rgba(179,157,219,0.15); -fx-background-radius: 6; -fx-padding: 4 6 4 6;"
+                : "-fx-padding: 4 6 4 6;");
         });
 
         //loop
         btnLoop.setOnAction(e -> {
             player.toggleLoop();
             boolean on = player.loopProperty().get();
-            ((SVGPath) btnLoop.getGraphic()).setFill(Color.web(on ? "#ffffff" : "#B39DDB"));
+            ((SVGPath) btnLoop.getGraphic()).setFill(Color.web(on ? "#CE93D8" : "#B39DDB"));
+            btnLoop.setStyle(on
+                ? "-fx-border-color: transparent; -fx-background-color: rgba(179,157,219,0.15); -fx-background-radius: 6; -fx-padding: 4 6 4 6;"
+                : "-fx-padding: 4 6 4 6;");
         });
 
-        //seeking
+        //seeking slider tiempo
         timeSlider.setOnMouseReleased(e -> player.seek(timeSlider.getValue()));
 
-        //slider volumen
-        player.currentTrackProperty().addListener((obs, oldT, newT) -> {
-            if (newT == null) return;
-            javafx.animation.AnimationTimer timer = new javafx.animation.AnimationTimer() {
+        //AnimationTimer
+        javafx.animation.AnimationTimer[] timerHolder = { null };
+
+        Runnable startTimer = () -> {
+            if (timerHolder[0] != null) timerHolder[0].stop();
+            timerHolder[0] = new javafx.animation.AnimationTimer() {
                 @Override
                 public void handle(long now) {
                     javafx.scene.media.MediaPlayer mp = player.getMediaPlayer();
                     if (mp == null) return;
-                    javafx.util.Duration total = mp.getTotalDuration();
+                    javafx.util.Duration total   = mp.getTotalDuration();
                     javafx.util.Duration current = mp.getCurrentTime();
                     if (total != null && !total.isUnknown() && total.toSeconds() > 0) {
                         double pct = (current.toSeconds() / total.toSeconds()) * 100;
@@ -162,8 +176,20 @@ public class PlayerControlsPanel extends HBox {
                     }
                 }
             };
-            timer.start();
-            player.currentTrackProperty().addListener((o, ot, nt) -> timer.stop());
+            timerHolder[0].start();
+        };
+
+        if (player.getCurrentTrack() != null) startTimer.run();
+
+        player.currentTrackProperty().addListener((obs, oldT, newT) -> {
+            if (newT == null) {
+                if (timerHolder[0] != null) timerHolder[0].stop();
+                timeSlider.setValue(0);
+                lblActualTime.setText("0:00");
+                lblMaxTime.setText("0:00");
+                return;
+            }
+            startTimer.run();
         });
 
         //like estado inicial
@@ -174,7 +200,7 @@ public class PlayerControlsPanel extends HBox {
             heartFilled.setVisible(liked);
         }
 
-        //like actualizar al cambiar canción
+        //like al actualizar la cancion
         player.currentTrackProperty().addListener((obs, oldT, newT) -> {
             if (newT == null) { heartEmpty.setVisible(true); heartFilled.setVisible(false); return; }
             boolean liked = player.isLiked(newT.getId());
@@ -182,11 +208,11 @@ public class PlayerControlsPanel extends HBox {
             heartFilled.setVisible(liked);
         });
 
-        //like  actualizar cuando cambia el set global
-        player.likedIdsProperty().addListener((obs, oldSet, newSet) -> {
+        
+        player.likedIdsProperty().addListener((SetChangeListener<Long>) change -> {
             TrackDTO t = player.getCurrentTrack();
             if (t == null) return;
-            boolean liked = newSet.contains(t.getId());
+            boolean liked = player.isLiked(t.getId());
             heartEmpty.setVisible(!liked);
             heartFilled.setVisible(liked);
         });
@@ -198,16 +224,18 @@ public class PlayerControlsPanel extends HBox {
             player.toggleLike(Session.getInstance().getUserId(), t.getId());
         });
 
-        //volumen popup vertical 
+        //popup volumen
         btnVolume.setOnAction(e -> {
             Slider volSlider = new Slider(0, 1, player.volumeProperty().get());
             volSlider.setOrientation(Orientation.VERTICAL);
-            volSlider.setPrefHeight(100);
+            volSlider.setPrefHeight(80);
+            volSlider.setPrefWidth(30);
             volSlider.valueProperty().bindBidirectional(player.volumeProperty());
 
             VBox popup = new VBox(volSlider);
             popup.setStyle("-fx-background-color: #1e1e1e; -fx-background-radius: 8; -fx-padding: 10;");
-            popup.setPrefWidth(40);
+            popup.setPrefWidth(50);
+            popup.setAlignment(Pos.CENTER);
 
             Popup volPopup = new Popup();
             volPopup.getContent().add(popup);
@@ -216,7 +244,112 @@ public class PlayerControlsPanel extends HBox {
             javafx.geometry.Bounds bounds = btnVolume.localToScreen(btnVolume.getBoundsInLocal());
             volPopup.show(btnVolume.getScene().getWindow(),
                     bounds.getMinX() - 5,
-                    bounds.getMinY() - 120);
+                    bounds.getMinY() - 140);
+
+            volSlider.applyCss();
+            volSlider.layout();
+
+            Runnable updateGradient = () -> {
+                javafx.scene.Node trackNode = volSlider.lookup(".track");
+                if (trackNode != null) {
+                    double pct = volSlider.getValue() * 100;
+                    trackNode.setStyle(
+                        "-fx-pref-width: 6px;" +
+                        "-fx-background-radius: 5;" +
+                        "-fx-background-color: linear-gradient(to top, #B39DDB " + pct + "%, rgba(255,255,255,0.15) " + pct + "%);"
+                    );
+                }
+                javafx.scene.Node thumbNode = volSlider.lookup(".thumb");
+                if (thumbNode != null) {
+                    thumbNode.setStyle(
+                        "-fx-background-color: #B39DDB;" +
+                        "-fx-background-radius: 50%;" +
+                        "-fx-padding: 6;"
+                    );
+                }
+            };
+            updateGradient.run();
+            volSlider.valueProperty().addListener((obs, oldVal, newVal) -> updateGradient.run());
+        });
+
+        btnDownload.setOnAction(e -> {
+            TrackDTO t = player.getCurrentTrack();
+            if (t == null) return;
+
+            javafx.stage.DirectoryChooser dc = new javafx.stage.DirectoryChooser();
+            dc.setTitle("Elegir carpeta de destino");
+            java.io.File destDir = dc.showDialog(btnDownload.getScene().getWindow());
+            if (destDir == null) return;
+
+            new Thread(() -> {
+                try {
+                    //descargar audio
+                    String audioUrl = "http://localhost:8080/api/tracks/" + t.getId() + "/stream";
+                    String ext = t.getTitle().toLowerCase().endsWith(".wav") ? ".wav" : ".mp3";
+                    java.io.File audioFile = new java.io.File(destDir, t.getTitle() + ext);
+
+                    java.net.HttpURLConnection conn = (java.net.HttpURLConnection)
+                        java.net.URI.create(audioUrl).toURL().openConnection();
+                    conn.setRequestMethod("GET");
+                    try (java.io.InputStream in = conn.getInputStream();
+                        java.io.FileOutputStream out = new java.io.FileOutputStream(audioFile)) {
+                        in.transferTo(out);
+                    }
+                    conn.disconnect();
+
+                    //incrustar portada e informacion como metadatos
+                    if (t.getCoverPath() != null && !t.getCoverPath().isBlank()) {
+                        java.io.File coverSrc = new java.io.File(t.getCoverPath());
+                        if (coverSrc.exists() && audioFile.getName().endsWith(".mp3")) {
+                            try {
+                                org.jaudiotagger.audio.AudioFile af =
+                                    org.jaudiotagger.audio.AudioFileIO.read(audioFile);
+                                org.jaudiotagger.tag.Tag tag = af.getTagOrCreateAndSetDefault();
+
+                                if (t.getTitle() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.TITLE, t.getTitle());
+                                if (t.getUploaderUsername() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.ARTIST, t.getUploaderUsername());
+                                if (t.getGenre() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.GENRE, t.getGenre());
+                                if (t.getBpm() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.BPM, String.valueOf(t.getBpm()));
+                                if (t.getMusicalKey() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.KEY, t.getMusicalKey());
+                                if (t.getDescription() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.COMMENT, t.getDescription());
+
+                                org.jaudiotagger.tag.images.Artwork artwork =
+                                    org.jaudiotagger.tag.images.ArtworkFactory.createArtworkFromFile(coverSrc);
+                                tag.setField(artwork);
+
+                                af.commit();;
+                            } catch (Exception tagEx) {
+                                System.err.println("No se pudo incrustar portada: " + tagEx.getMessage());
+                            }
+                        }
+                    }
+
+                    javafx.application.Platform.runLater(() -> {
+                        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                            javafx.scene.control.Alert.AlertType.INFORMATION);
+                        alert.setTitle("Descarga completada");
+                        alert.setHeaderText(null);
+                        alert.setContentText("\"" + t.getTitle() + "\" guardado en:\n" + destDir.getAbsolutePath());
+                        alert.show();
+                    });
+
+                } catch (Exception ex) {
+                    javafx.application.Platform.runLater(() -> {
+                        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                            javafx.scene.control.Alert.AlertType.ERROR);
+                        alert.setTitle("Error de descarga");
+                        alert.setHeaderText(null);
+                        alert.setContentText("No se pudo descargar: " + ex.getMessage());
+                        alert.show();
+                    });
+                }
+            }).start();
         });
 
         mainPill.getChildren().addAll(

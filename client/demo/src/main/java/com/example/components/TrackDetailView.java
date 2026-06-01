@@ -159,6 +159,83 @@ public class TrackDetailView extends VBox{
 
         //logica playlist
         btnPlaylist.setOnAction(e -> new AddToPlaylistPopup(track).show());
+        //logica descarga
+        btnDownload.setOnAction(e -> {
+            javafx.stage.DirectoryChooser dc = new javafx.stage.DirectoryChooser();
+            dc.setTitle("Elegir carpeta de destino");
+            java.io.File destDir = dc.showDialog(btnDownload.getScene().getWindow());
+            if (destDir == null) return;
+
+            new Thread(() -> {
+                try {
+                    //descargar audio
+                    String audioUrl = "http://localhost:8080/api/tracks/" + track.getId() + "/stream";
+                    String ext = track.getTitle().toLowerCase().endsWith(".wav") ? ".wav" : ".mp3";
+                    java.io.File audioFile = new java.io.File(destDir, track.getTitle() + ext);
+
+                    java.net.HttpURLConnection conn = (java.net.HttpURLConnection)
+                        java.net.URI.create(audioUrl).toURL().openConnection();
+                    conn.setRequestMethod("GET");
+                    try (java.io.InputStream in = conn.getInputStream();
+                        java.io.FileOutputStream out = new java.io.FileOutputStream(audioFile)) {
+                        in.transferTo(out);
+                    }
+                    conn.disconnect();
+
+                    //insertar metadata
+                    if (track.getCoverPath() != null && !track.getCoverPath().isBlank()) {
+                        java.io.File coverSrc = new java.io.File(track.getCoverPath());
+                        if (coverSrc.exists() && audioFile.getName().endsWith(".mp3")) {
+                            try {
+                                org.jaudiotagger.audio.AudioFile af =
+                                    org.jaudiotagger.audio.AudioFileIO.read(audioFile);
+                                org.jaudiotagger.tag.Tag tag = af.getTagOrCreateAndSetDefault();
+
+                                if (track.getTitle() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.TITLE, track.getTitle());
+                                if (track.getUploaderUsername() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.ARTIST, track.getUploaderUsername());
+                                if (track.getGenre() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.GENRE, track.getGenre());
+                                if (track.getBpm() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.BPM, String.valueOf(track.getBpm()));
+                                if (track.getMusicalKey() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.KEY, track.getMusicalKey());
+                                if (track.getDescription() != null)
+                                    tag.setField(org.jaudiotagger.tag.FieldKey.COMMENT, track.getDescription());
+
+                                org.jaudiotagger.tag.images.Artwork artwork =
+                                    org.jaudiotagger.tag.images.ArtworkFactory.createArtworkFromFile(coverSrc);
+                                tag.setField(artwork);
+
+                                af.commit();
+                            } catch (Exception tagEx) {
+                                System.err.println("No se pudo incrustar metadata: " + tagEx.getMessage());
+                            }
+                        }
+                    }
+
+                    javafx.application.Platform.runLater(() -> {
+                        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                            javafx.scene.control.Alert.AlertType.INFORMATION);
+                        alert.setTitle("Descarga completada");
+                        alert.setHeaderText(null);
+                        alert.setContentText("\"" + track.getTitle() + "\" guardado en:\n" + destDir.getAbsolutePath());
+                        alert.show();
+                    });
+
+                } catch (Exception ex) {
+                    javafx.application.Platform.runLater(() -> {
+                        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(
+                            javafx.scene.control.Alert.AlertType.ERROR);
+                        alert.setTitle("Error de descarga");
+                        alert.setHeaderText(null);
+                        alert.setContentText("No se pudo descargar: " + ex.getMessage());
+                        alert.show();
+                    });
+                }
+            }).start();
+        });
 
         btnRow.getChildren().addAll(btnPlay, btnLike, btnPlaylist, btnDownload);
         infoBox.getChildren().addAll(lblTitle, lblArtist, btnRow);
