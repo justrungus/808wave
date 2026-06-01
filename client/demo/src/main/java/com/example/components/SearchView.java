@@ -116,7 +116,7 @@ public class SearchView extends VBox {
             trackGrid.setVgap(12);
             for (TrackDTO t : tracks) {
                 boolean liked = data.likedIds.contains(t.getId());
-                trackGrid.getChildren().add(new TrackCard(t, liked, contentArea, goBack));
+                trackGrid.getChildren().add(new TrackCard(t, liked, contentArea, goBack, data.tracks));
             }
             content.getChildren().add(trackGrid);
         }

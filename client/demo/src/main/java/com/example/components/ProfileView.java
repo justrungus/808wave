@@ -320,7 +320,7 @@ public class ProfileView extends VBox {
         };
 
         for (TrackDTO track : tracks) {
-            grid.getChildren().add(new TrackCard(track, false, contentArea, goProfile));
+            grid.getChildren().add(new TrackCard(track, false, contentArea, goProfile, tracks));
         }
 
         section.getChildren().add(grid);
