@@ -5,9 +5,7 @@ import java.util.List;
 import com.example.core.AudioPlayer;
 import com.example.core.Session;
 import com.example.models.TrackDTO;
-import com.example.services.TrackService;
 
-import javafx.concurrent.Task;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -20,8 +18,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.SVGPath;
 
 public class TrackCard extends VBox {
-
-    private final TrackService trackService = new TrackService();
 
     public TrackCard(TrackDTO track, boolean initialLiked, StackPane contentArea, Runnable onBack) {
         this(track, initialLiked, contentArea, onBack, null);
@@ -62,7 +58,19 @@ public class TrackCard extends VBox {
         SVGPath heartFilled = new SVGPath();
         heartFilled.setContent("M12 21.35l-1.45-1.32C5.4 15.36 2 12.27 2 8.5C2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53z");
         heartFilled.setFill(Color.web("#B39DDB")); heartFilled.setScaleX(0.9); heartFilled.setScaleY(0.9);
-        heartEmpty.setVisible(!initialLiked); heartFilled.setVisible(initialLiked);
+
+        
+        boolean liked = AudioPlayer.getInstance().isLiked(track.getId());
+        heartEmpty.setVisible(!liked);
+        heartFilled.setVisible(liked);
+
+        
+        AudioPlayer.getInstance().likedIdsProperty().addListener((obs, oldSet, newSet) -> {
+            boolean nowLiked = newSet.contains(track.getId());
+            heartEmpty.setVisible(!nowLiked);
+            heartFilled.setVisible(nowLiked);
+        });
+
         StackPane heartIcon = new StackPane(heartEmpty, heartFilled);
 
         Button btnLike = new Button();
@@ -99,25 +107,25 @@ public class TrackCard extends VBox {
             btnLike.setVisible(false); btnAddPlaylist.setVisible(false);
         });
 
+        
         btnLike.setOnAction(e -> {
             e.consume();
-            btnLike.setDisable(true);
-            Task<Boolean> t = new Task<>() {
-                @Override protected Boolean call() throws Exception {
-                    return trackService.toggleLike(Session.getInstance().getUserId(), track.getId());
-                }
-            };
-            t.setOnSucceeded(ev -> { boolean liked = t.getValue(); heartEmpty.setVisible(!liked); heartFilled.setVisible(liked); btnLike.setDisable(false); });
-            t.setOnFailed(ev -> btnLike.setDisable(false));
-            new Thread(t).start();
+            AudioPlayer.getInstance().toggleLike(Session.getInstance().getUserId(), track.getId());
         });
 
         btnAddPlaylist.setOnAction(e -> { e.consume(); new AddToPlaylistPopup(track).show(); });
 
+        // click en portada reproduce cancion
+        coverPane.setOnMouseClicked(e -> {
+            if (e.getTarget() == btnLike || e.getTarget() == btnAddPlaylist) return;
+            e.consume();
+            AudioPlayer.getInstance().play(track, queue);
+        });
+
+        // click fuera de portada entra en la vista de la cancion
         this.setOnMouseClicked(e -> {
             if (contentArea == null || onBack == null) return;
             if (e.getTarget() == btnLike || e.getTarget() == btnAddPlaylist) return;
-            AudioPlayer.getInstance().play(track, queue);
             contentArea.getChildren().clear();
             contentArea.getChildren().add(new TrackDetailView(track, initialLiked, onBack, contentArea));
         });

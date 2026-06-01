@@ -67,7 +67,8 @@ public class TrackSection extends VBox {
             empty.setStyle("-fx-text-fill: gray; -fx-font-size: 12px;");
             cardsRow.getChildren().add(empty);
         } else {
-            for (TrackDTO track : tracks) {
+            List<TrackDTO> visible = tracks.stream().limit(6).collect(java.util.stream.Collectors.toList());
+            for (TrackDTO track : visible) {
                 boolean liked = likedIds != null && likedIds.contains(track.getId());
                 cardsRow.getChildren().add(new TrackCard(track, liked, contentArea, onBack, tracks));
             }

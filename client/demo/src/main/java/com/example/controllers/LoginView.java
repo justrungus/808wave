@@ -1,5 +1,6 @@
 package com.example.controllers;
 
+import com.example.core.AudioPlayer;
 import com.example.core.Router;
 import com.example.core.Session;
 import com.example.models.User;
@@ -75,17 +76,12 @@ public class LoginView extends VBox {
                 }
             };
 
-            // loginTask.setOnSucceeded(event -> {
-            //     Session.getInstance().setUsername(loginTask.getValue().getUsername());
-            //     Session.getInstance().setUserId(loginTask.getValue().getUserId());
-            //     Router.navigateTo("MAIN");
-            //     btnLogin.setDisable(false);
-            // });
             loginTask.setOnSucceeded(event -> {
                 User u = loginTask.getValue();
-                System.out.println("DEBUG login - userId: " + u.getUserId() + " username: " + u.getUsername());
                 Session.getInstance().setUsername(u.getUsername());
                 Session.getInstance().setUserId(u.getUserId());
+                Session.getInstance().setProfilePicturePath(u.getProfilePicturePath());
+                AudioPlayer.getInstance().loadLikedTracks(u.getUserId());
                 Router.navigateTo("MAIN");
                 btnLogin.setDisable(false);
             });

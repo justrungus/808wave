@@ -67,14 +67,26 @@ public class HomeView extends VBox {
             };
 
             content.getChildren().addAll(
-                new TrackSection("Recently Added", data.recent, data.likedIds, contentArea, goHome, null),
-                new TrackSection("Most Played", data.top, data.likedIds, contentArea, goHome, null),
-                new TrackSection("Your Tracks", data.mine, data.likedIds, contentArea, goHome, null)
+                new TrackSection("Recently Added", data.recent, data.likedIds, contentArea, goHome, () -> {
+                    contentArea.getChildren().clear();
+                    contentArea.getChildren().add(new SeeAllView("Recently Added", data.recent, data.likedIds, contentArea, goHome, goHome));
+                }),
+                new TrackSection("Most Played", data.top, data.likedIds, contentArea, goHome, () -> {
+                    contentArea.getChildren().clear();
+                    contentArea.getChildren().add(new SeeAllView("Most Played", data.top, data.likedIds, contentArea, goHome, goHome));
+                }),
+                new TrackSection("Your Tracks", data.mine, data.likedIds, contentArea, goHome, () -> {
+                    contentArea.getChildren().clear();
+                    contentArea.getChildren().add(new SeeAllView("Your Tracks", data.mine, data.likedIds, contentArea, goHome, goHome));
+                })
             );
 
             if (data.feed != null && !data.feed.isEmpty()) {
                 content.getChildren().add(
-                    new TrackSection("From people you follow", data.feed, data.likedIds, contentArea, goHome, null)
+                    new TrackSection("From people you follow", data.feed, data.likedIds, contentArea, goHome, () -> {
+                        contentArea.getChildren().clear();
+                        contentArea.getChildren().add(new SeeAllView("From people you follow", data.feed, data.likedIds, contentArea, goHome, goHome));
+                    })
                 );
             }
 
