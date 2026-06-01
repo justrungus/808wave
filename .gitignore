@@ -42,3 +42,7 @@ server/storage/
 storage/audios
 postgres-data/
 pg-data/
+.env
+server/src/main/resources/application-local.properties
+server/src/main/resources/application.properties
+docker-compose.yml

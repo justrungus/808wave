@@ -6,8 +6,8 @@ services:
     container_name: wave808-db
     restart: always
     environment:
-      POSTGRES_USER: 808rungusadmin
-      POSTGRES_PASSWORD: 161819wavE-
+      POSTGRES_USER: CAMBIAR!!!
+      POSTGRES_PASSWORD: CAMBIAR!!!
       POSTGRES_DB: wave808_db
     ports:
       - "5433:5432"

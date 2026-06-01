@@ -1,8 +1,8 @@
 spring.application.name=808wave-server
 
 spring.datasource.url=jdbc:postgresql://localhost:5433/wave808_db
-spring.datasource.username=808rungusadmin
-spring.datasource.password=161819wavE-
+spring.datasource.username=CAMBIAR!!!!
+spring.datasource.password=CAMBIAR!!!!
 spring.datasource.driver-class-name=org.postgresql.Driver
 
 spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
