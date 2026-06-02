@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.example.core.Config;
 import com.example.models.ProfileDTO;
 import com.example.models.TrackDTO;
 import com.example.models.User;
@@ -23,7 +24,7 @@ public class UserService {
 
     private final HttpClient client = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
-    private final String BASE_URL = "http://localhost:8080/api/users";
+    private final String BASE_URL = Config.SERVER_URL+"/api/users";
 
     public ProfileDTO getProfile(Long userId, Long requesterId) throws Exception {
         String url = BASE_URL + "/" + userId + "/profile";

@@ -1,6 +1,7 @@
 package com.example.components;
 
 import com.example.core.AudioPlayer;
+import com.example.core.Config;
 import com.example.core.Session;
 import com.example.models.TrackDTO;
 
@@ -284,7 +285,7 @@ public class PlayerControlsPanel extends HBox {
             new Thread(() -> {
                 try {
                     //descargar audio
-                    String audioUrl = "http://localhost:8080/api/tracks/" + t.getId() + "/stream";
+                    String audioUrl = Config.SERVER_URL + "/api/tracks/" + t.getId() + "/stream";
                     String ext = t.getTitle().toLowerCase().endsWith(".wav") ? ".wav" : ".mp3";
                     java.io.File audioFile = new java.io.File(destDir, t.getTitle() + ext);
 

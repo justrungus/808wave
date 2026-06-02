@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.example.core.Config;
 import com.example.models.PlaylistDTO;
 import com.example.models.TrackDTO;
 import com.google.gson.Gson;
@@ -20,7 +21,7 @@ public class PlaylistService {
     
     private final HttpClient client = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
-    private final String BASE_URL = "http://localhost:8080/api/playlists";
+    private final String BASE_URL = Config.SERVER_URL+"/api/playlists";
 
     public PlaylistDTO createPlaylist(String name, Long userId) throws Exception{
         String body = gson.toJson(Map.of("name", name, "userId", userId));

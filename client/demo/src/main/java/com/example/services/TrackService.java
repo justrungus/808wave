@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import com.example.core.Config;
 import com.example.models.TrackDTO;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -20,7 +21,7 @@ public class TrackService {
 
     private final HttpClient client = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
-    private final String BASE_URL = "http://localhost:8080/api/tracks";
+    private final String BASE_URL = Config.SERVER_URL+"/api/tracks";
 
     public List<TrackDTO> searchTracks(String query) throws Exception {
         String encoded = java.net.URLEncoder.encode(query, java.nio.charset.StandardCharsets.UTF_8);

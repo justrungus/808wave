@@ -1,5 +1,6 @@
 package com.example.controllers;
 
+import com.example.core.AudioPlayer;
 import com.example.core.Router;
 import com.example.core.Session;
 import com.example.models.User;
@@ -94,7 +95,11 @@ public class RegisterView extends VBox{
             };
 
             registerTask.setOnSucceeded(event -> {
-                Session.getInstance().setUsername(registerTask.getValue().getUsername());
+                User registeredUser = registerTask.getValue();
+                Session.getInstance().setUsername(registeredUser.getUsername());
+                Session.getInstance().setUserId(registeredUser.getUserId());
+                Session.getInstance().setProfilePicturePath(registeredUser.getProfilePicturePath());
+                AudioPlayer.getInstance().loadLikedTracks(registeredUser.getUserId());
                 Router.navigateTo("MAIN");
                 btnRegister.setDisable(false);
             });
