@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: wave808-db
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_DB: ${DB_NAME}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - wave808-network
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: wave808-server
+    restart: always
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+    volumes:
+      - audio_data:/app/storage/audios
+      - covers_data:/app/storage/playlist-covers
+      - pictures_data:/app/storage/profile-pictures
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    networks:
+      - wave808-network
+
+volumes:
+  postgres_data:
+  audio_data:
+  covers_data:
+  pictures_data:
+
+networks:
+  wave808-network:
+    driver: bridge
