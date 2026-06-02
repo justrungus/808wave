@@ -6,6 +6,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Map;
 
+import com.example.core.Config;
 import com.example.models.User;
 import com.google.gson.Gson;
 
@@ -17,7 +18,7 @@ import com.google.gson.Gson;
 public class AuthService {
     private final HttpClient client = HttpClient.newHttpClient();
     private final Gson gson = new Gson();
-    private final String BASE_URL = "http://localhost:8080/api/auth";
+    private final String BASE_URL = Config.SERVER_URL+"/api/auth";
 
 
     public User register(String username, String email, String password) throws Exception {

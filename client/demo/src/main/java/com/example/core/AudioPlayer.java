@@ -164,7 +164,7 @@ public class AudioPlayer {
         currentTrack.set(track);
         playing.set(false);
 
-        String url = "http://localhost:8080/api/tracks/" + track.getId() + "/stream";
+        String url = Config.SERVER_URL+"/api/tracks/" + track.getId() + "/stream";
         try {
             Media media = new Media(url);
             mediaPlayer = new MediaPlayer(media);

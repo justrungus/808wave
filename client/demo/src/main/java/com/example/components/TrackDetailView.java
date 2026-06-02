@@ -1,6 +1,6 @@
 package com.example.components;
 
-
+import com.example.core.Config;
 import com.example.core.Session;
 import com.example.models.TrackDTO;
 import com.example.services.TrackService;
@@ -169,7 +169,7 @@ public class TrackDetailView extends VBox{
             new Thread(() -> {
                 try {
                     //descargar audio
-                    String audioUrl = "http://localhost:8080/api/tracks/" + track.getId() + "/stream";
+                    String audioUrl = Config.SERVER_URL +"/api/tracks/" + track.getId() + "/stream";
                     String ext = track.getTitle().toLowerCase().endsWith(".wav") ? ".wav" : ".mp3";
                     java.io.File audioFile = new java.io.File(destDir, track.getTitle() + ext);
 
