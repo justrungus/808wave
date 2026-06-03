@@ -1,6 +1,7 @@
 package com.example.components;
 
 import com.example.core.AudioPlayer;
+import com.example.core.Config;
 import com.example.models.TrackDTO;
 
 import javafx.geometry.Insets;
@@ -53,8 +54,8 @@ public class NowPlayingPanel extends VBox {
 
         if (track.getCoverPath() != null) {
             try {
-                String safePath = track.getCoverPath().replace(" ", "%20");
-                Image img = new Image("file:" + safePath);
+                String safePath = (Config.SERVER_URL + "/" + track.getCoverPath()).replace(" ", "%20");
+                Image img = new Image(safePath);
                 if (!img.isError()) { albumArt.setImage(img); return; }
             } catch (Exception ignored) {}
         }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.example.core.Config;
 import com.example.core.Session;
 import com.example.models.PlaylistDTO;
 import com.example.models.TrackDTO;
@@ -184,8 +185,8 @@ public class SearchView extends VBox {
 
         if (user.getProfilePicturePath() != null) {
             try {
-                String safePath = user.getProfilePicturePath().replace(" ", "%20");
-                Image img = new Image("file:" + safePath);
+                String safePath = (Config.SERVER_URL + "/" + user.getProfilePicturePath()).replace(" ", "%20");
+                Image img = new Image(safePath);
                 if (!img.isError()) {
                     ImageView iv = new ImageView(img);
                     iv.setFitWidth(36);

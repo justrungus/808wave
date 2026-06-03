@@ -1,5 +1,6 @@
 package com.example.components;
 
+import com.example.core.Config;
 import com.example.core.Session;
 
 import atlantafx.base.theme.Styles;
@@ -210,8 +211,8 @@ public class MainContentPanel extends VBox {
         String picPath = Session.getInstance().getProfilePicturePath();
         if (picPath != null && avatarImageView != null) {
             try {
-                String safePath = picPath.replace(" ", "%20");
-                Image img = new Image("file:" + safePath);
+                String safePath = (Config.SERVER_URL + "/" + picPath).replace(" ", "%20");
+                Image img = new Image(safePath);
                 if (!img.isError()) {
                     avatarImageView.setImage(img);
                     avatarImageView.setVisible(true);

@@ -54,8 +54,8 @@ public class TrackDetailView extends VBox{
 
         if (track.getCoverPath() != null) {
             try {
-                String safePath = track.getCoverPath().replace(" ", "%20");
-                Image img = new Image("file:" + safePath);
+                String safePath = (Config.SERVER_URL + "/" + track.getCoverPath()).replace(" ", "%20");
+                Image img = new Image(safePath);
                 if (!img.isError()) {
                     ImageView cover = new ImageView(img);
                     cover.setFitWidth(200);
@@ -184,7 +184,12 @@ public class TrackDetailView extends VBox{
 
                     //insertar metadata
                     if (track.getCoverPath() != null && !track.getCoverPath().isBlank()) {
-                        java.io.File coverSrc = new java.io.File(track.getCoverPath());
+                        String coverUrl = Config.SERVER_URL + "/" + track.getCoverPath();
+                        java.io.File coverSrc = java.io.File.createTempFile("cover", ".png");
+                        try (java.io.InputStream in = java.net.URI.create(coverUrl).toURL().openStream();
+                            java.io.FileOutputStream out = new java.io.FileOutputStream(coverSrc)) {
+                            in.transferTo(out);
+                        }
                         if (coverSrc.exists() && audioFile.getName().endsWith(".mp3")) {
                             try {
                                 org.jaudiotagger.audio.AudioFile af =
