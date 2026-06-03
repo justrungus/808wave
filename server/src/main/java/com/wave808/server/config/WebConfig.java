@@ -12,3 +12,4 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/storage/**")
                 .addResourceLocations("file:/app/storage/");
     }
+}
