@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.example.core.Config;
 import com.example.core.Session;
 import com.example.models.PlaylistDTO;
 import com.example.models.TrackDTO;
@@ -134,8 +135,8 @@ public class PlaylistDetailView extends VBox{
         boolean hasCover = false;
         if(playlist.getCoverPath() != null){
             try{
-                String safePath = playlist.getCoverPath().replace(" ", "%20");
-                Image img = new Image("file: "+safePath);
+                String safePath = (Config.SERVER_URL + "/" + playlist.getCoverPath()).replace(" ", "%20");
+                Image img = new Image(safePath);
                 if(!img.isError()){
                     ImageView iv = new ImageView(img);
                     iv.setFitWidth(180);
@@ -258,8 +259,8 @@ public class PlaylistDetailView extends VBox{
         boolean hasCover = false;
         if (track.getCoverPath() != null) {
             try {
-                String safePath = track.getCoverPath().replace(" ", "%20");
-                Image img = new Image("file:" + safePath);
+                String safePath = (Config.SERVER_URL + "/" + track.getCoverPath()).replace(" ", "%20");
+                Image img = new Image(safePath);
                 if (!img.isError()) {
                     ImageView iv = new ImageView(img);
                     iv.setFitWidth(40);

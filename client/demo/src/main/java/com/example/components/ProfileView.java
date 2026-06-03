@@ -3,6 +3,7 @@ package com.example.components;
 import java.io.File;
 import java.util.List;
 
+import com.example.core.Config;
 import com.example.core.Session;
 import com.example.models.PlaylistDTO;
 import com.example.models.ProfileDTO;
@@ -158,8 +159,9 @@ public class ProfileView extends VBox {
         boolean hasPic = false;
         if (profile.getProfilePicturePath() != null) {
             try {
-                String safePath = profile.getProfilePicturePath().replace(" ", "%20");
-                Image img = new Image("file:" + safePath);
+                String safePath = (Config.SERVER_URL + "/" + profile.getProfilePicturePath()).replace(" ", "%20");
+                // System.out.println("Imagen URL: " + safePath);
+                Image img = new Image(safePath);
                 if (!img.isError()) {
                     ImageView iv = new ImageView(img);
                     iv.setFitWidth(120);

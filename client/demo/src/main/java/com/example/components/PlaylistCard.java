@@ -1,5 +1,6 @@
 package com.example.components;
 
+import com.example.core.Config;
 import com.example.models.PlaylistDTO;
 
 import javafx.geometry.Pos;
@@ -35,8 +36,8 @@ public class PlaylistCard extends VBox {
         boolean hasCover = false;
         if (pl.getCoverPath() != null) {
             try {
-                String safePath = pl.getCoverPath().replace(" ", "%20");
-                Image img = new Image("file:" + safePath);
+                String safePath = (Config.SERVER_URL + "/" + pl.getCoverPath()).replace(" ", "%20");
+                Image img = new Image(safePath);
                 if (!img.isError()) {
                     ImageView iv = new ImageView(img);
                     iv.setFitWidth(130);

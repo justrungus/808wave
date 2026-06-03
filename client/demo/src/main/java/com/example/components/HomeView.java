@@ -44,8 +44,8 @@ public class HomeView extends VBox {
             protected HomeData call() throws Exception {
                 List<TrackDTO> recent = trackService.getRecentTracks();
                 List<TrackDTO> top = trackService.getTopTracks();
-                List<TrackDTO> mine = trackService.getTracksByUser(userId);
-                List<TrackDTO> liked = trackService.getLikedTracks(userId);
+                List<TrackDTO> mine = userId != null ? trackService.getTracksByUser(userId) : List.of();
+                List<TrackDTO> liked = userId != null ? trackService.getLikedTracks(userId) : List.of();
                 List<TrackDTO> feed = userId != null ? userService.getFollowingFeed(userId) : List.of();
                 Set<Long> likedIds = liked.stream()
                         .map(TrackDTO::getId)

@@ -3,6 +3,7 @@ package com.example.components;
 import java.util.List;
 
 import com.example.core.AudioPlayer;
+import com.example.core.Config;
 import com.example.core.Session;
 import com.example.models.TrackDTO;
 
@@ -38,8 +39,8 @@ public class TrackCard extends VBox {
 
         if (track.getCoverPath() != null) {
             try {
-                String safePath = track.getCoverPath().replace(" ", "%20");
-                Image img = new Image("file:" + safePath);
+                String safePath = (Config.SERVER_URL + "/" + track.getCoverPath()).replace(" ", "%20");
+                Image img = new Image(safePath);
                 if (!img.isError()) {
                     ImageView cover = new ImageView(img);
                     cover.setFitWidth(130); cover.setFitHeight(130); cover.setPreserveRatio(false);
